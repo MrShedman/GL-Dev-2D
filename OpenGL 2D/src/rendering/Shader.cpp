@@ -1,0 +1,224 @@
+#include "Shader.hpp"
+
+#include <fstream>
+#include <iostream>
+
+#include "GL\glew.h"
+
+namespace
+{
+	bool getFileContents(const std::string& filename, std::vector<char>& buffer)
+	{
+		std::ifstream file(filename.c_str(), std::ios_base::binary);
+		if (file)
+		{
+			file.seekg(0, std::ios_base::end);
+			std::streamsize size = file.tellg();
+			if (size > 0)
+			{
+				file.seekg(0, std::ios_base::beg);
+				buffer.resize(static_cast<std::size_t>(size));
+				file.read(&buffer[0], size);
+			}
+			buffer.push_back('\0');
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	void printProgramLog(GLuint obj)
+	{
+		GLint infoLogLength = 0;
+		GLsizei charsWritten = 0;
+		GLchar *infoLog;
+
+		glGetProgramiv(obj, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+		std::cout << infoLogLength << std::endl;
+
+		if (infoLogLength > 0)
+		{
+			infoLog = (char *)malloc(infoLogLength);
+			glGetProgramInfoLog(obj, infoLogLength, &charsWritten, infoLog);
+			printf("%s\n", infoLog);
+			free(infoLog);
+		}
+	}
+
+	bool getAttributeLocation(int programID, const std::string& name, GLint& location)
+	{
+		location = glGetAttribLocation(programID, name.c_str());
+		
+		if (location == -1)
+		{
+			std::cout << name << " is not a valid glsl program variable!" << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+
+	bool getUniformLocation(int programID, const std::string& name, GLint& location)
+	{
+		location = glGetUniformLocation(programID, name.c_str());
+
+		if (location == -1)
+		{
+			std::cout << name << " is not a valid glsl program variable!" << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+}
+
+Shader2D::Shader2D()
+{
+
+}
+
+Shader2D::~Shader2D()
+{
+	glDeleteProgram(m_programID);
+	m_programID = 0;
+}
+
+bool Shader2D::loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+{
+	// Read the vertex shader file
+	std::vector<char> vertexShader;
+	if (!getFileContents(vertexShaderFilename, vertexShader))
+	{
+		std::cout << "Failed to open vertex shader file \"" << vertexShaderFilename << "\"" << std::endl;
+		return false;
+	}
+
+	// Read the fragment shader file
+	std::vector<char> fragmentShader;
+	if (!getFileContents(fragmentShaderFilename, fragmentShader))
+	{
+		std::cout << "Failed to open fragment shader file \"" << fragmentShaderFilename << "\"" << std::endl;
+		return false;
+	}
+
+	int frag = glCreateShader(GL_FRAGMENT_SHADER);
+	int vert = glCreateShader(GL_VERTEX_SHADER);
+
+	if (frag == 0)
+	{
+		std::cout << "Error creating shader type: Fragment" << std::endl;
+
+		return false;
+	}
+	if (vert == 0)
+	{
+		std::cout << "Error creating shader type: Vertex" << std::endl;
+
+		return false;
+	}
+
+	m_programID = glCreateProgram();
+
+	if (!compile(fragmentShader, frag) || !compile(vertexShader, vert))
+	{
+		return false;
+	}
+
+	glLinkProgram(m_programID);
+
+	//Check for errors
+	GLint programSuccess = GL_TRUE;
+	glGetProgramiv(m_programID, GL_LINK_STATUS, &programSuccess);
+	
+	if (programSuccess != GL_TRUE)
+	{
+		std::cout << "Error linking program: " << m_programID << std::endl;
+		printProgramLog(m_programID);
+		glDeleteProgram(m_programID);
+		glDetachShader(m_programID, frag);
+		glDetachShader(m_programID, vert);
+		m_programID = 0;
+		return false;
+	}
+
+	if (!getAttributeLocation(m_programID, "LVertexPos2D", m_positionLocation))
+	{
+
+	}
+
+	if (!getAttributeLocation(m_programID, "LTexCoord", m_texCoordLocation))
+	{
+
+	}
+
+	if (!getAttributeLocation(m_programID, "LVertexColor", m_colourLocation))
+	{
+
+	}
+
+	if (!getUniformLocation(m_programID, "LProjectionMatrix", m_projectionMatrixLocation))
+	{
+
+	}
+
+	if (!getUniformLocation(m_programID, "LModelViewMatrix", m_modelViewMatrixLocation))
+	{
+
+	}
+
+	glDetachShader(m_programID, frag);
+	glDetachShader(m_programID, vert);
+
+	return true;
+}
+
+int Shader2D::getProgramID() const
+{
+	return m_programID;
+}
+
+void Shader2D::bind(const Shader2D* shader)
+{
+	if (shader && shader->getProgramID())
+	{
+		// Bind the shader
+		glUseProgram(shader->getProgramID());
+	}
+	else
+	{
+		// Bind no shader
+		glUseProgram(0);
+	}
+}
+
+bool Shader2D::compile(const std::vector<char>& buffer, int shader)
+{
+	const GLchar* p[1];
+	p[0] = &buffer[0];
+	GLint lengths[1];
+	lengths[0] = buffer.size();
+
+	glShaderSource(shader, 1, p, lengths);
+	glCompileShader(shader);
+
+	GLint success;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+
+	if (!success)
+	{
+		GLchar InfoLog[1024];
+
+		glGetShaderInfoLog(shader, 1024, NULL, InfoLog);
+	
+		std::cout << InfoLog << std::endl;
+
+		return false;
+	}
+
+	glAttachShader(m_programID, shader);
+
+	return true;
+}
