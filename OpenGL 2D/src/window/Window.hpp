@@ -8,7 +8,7 @@
 #include "NonCopyable.hpp"
 #include "Config.h"
 #include "OpenGL.hpp"
-
+#include "..\rendering\Color.h"
 
 namespace priv
 {
@@ -26,15 +26,9 @@ public:
 
     Window(VideoMode mode, const std::string& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
 
-    explicit Window(WindowHandle handle, const ContextSettings& settings = ContextSettings());
-
-    virtual ~Window();
+    ~Window();
 
     void create(VideoMode mode, const std::string& title, Uint32 style = Style::Default, const ContextSettings& settings = ContextSettings());
-
-    void create(WindowHandle handle, const ContextSettings& settings = ContextSettings());
-
-	void bindAsRenderTarget() const;
 
     void close();
 
@@ -72,7 +66,7 @@ public:
 
     void setFramerateLimit(unsigned int limit);
 
-    bool setActive(bool active = true) const;
+	void clear(Color color = Color::Black);
 
     void display();
 
@@ -91,12 +85,6 @@ public:
 	bool isDragDropAllowed() const;
 
     WindowHandle getSystemHandle() const;
-
-protected:
-
-    virtual void onCreate();
-
-    virtual void onResize();
 
 private:
 

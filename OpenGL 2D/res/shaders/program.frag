@@ -15,5 +15,5 @@ out vec4 color;
 void main()
 {
 	//final color
-	color = vertexColor * texture( m_texture[0], texCoord );	
+	color = vertexColor * texture( m_texture[0], texCoord );
 }

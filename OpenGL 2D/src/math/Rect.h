@@ -70,6 +70,11 @@ public:
 		return (x >= left && x <= right && y <= bottom && y >= top);
 	}
 
+	bool contains(const Vector2<T>& point)
+	{
+		return contains(point.x, point.y);
+	}
+
 	T getWidth() const
 	{
 		return right - left;

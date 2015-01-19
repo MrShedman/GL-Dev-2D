@@ -13,3 +13,5 @@ inline T Clamp(const T &a, const T &min, const T &max)
 	else if (a > max) return max;
 	else return a;
 }
+
+float randomize(float min, float max);

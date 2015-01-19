@@ -2,84 +2,174 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 
 #include "..\math\Matrix.h"
 #include "Color.h"
 #include "GL\glew.h"
 
-void outputMatrix(const Matrix4f& m);
-
 class Shader2D
 {
 public:
+
+	struct Desc
+	{
+		std::string vertex;
+		std::string texture;
+		std::string color;
+	};
 
 	Shader2D();
 
 	~Shader2D();
 
-	bool loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename);
+	bool loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename, Desc c);
 
 	int getProgramID() const;
 
 	static void bind(const Shader2D* shader);
 	
-	void setVertexPointer(GLsizei stride, const GLvoid* data)
+	void setVertexPointer(GLsizei stride, const GLvoid* data) const
 	{
-		glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, stride, data);
+		glVertexAttribPointer(m_positionLocation, 3, GL_FLOAT, GL_FALSE, stride, data);
 	}
 
-	void setTexCoordPointer(GLsizei stride, const GLvoid* data)
+	void setTexCoordPointer(GLsizei stride, const GLvoid* data) const
 	{
 		glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, stride, data);
 	}
 
-	void setColourPointer(GLsizei stride, const GLvoid* data)
+	void setColourPointer(GLsizei stride, const GLvoid* data) const
 	{
 		glVertexAttribPointer(m_colourLocation, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, data);
 	}
 
-	void enableVertexPointer()
+	void enableVertexPointer() const
 	{
 		glEnableVertexAttribArray(m_positionLocation);
 	}
 
-	void disableVertexPointer()
+	void disableVertexPointer() const
 	{
 		glDisableVertexAttribArray(m_positionLocation);
 	}
 
-	void enableTexCoordPointer()
+	void enableTexCoordPointer() const
 	{
 		glEnableVertexAttribArray(m_texCoordLocation);
 	}
 
-	void disableTexCoordPointer()
+	void disableTexCoordPointer() const
 	{
 		glDisableVertexAttribArray(m_texCoordLocation);
 	}
 
-	void enableColourPointer()
+	void enableColourPointer() const
 	{
 		glEnableVertexAttribArray(m_colourLocation);
 	}
 
-	void disableColourPointer()
+	void disableColourPointer() const
 	{
 		glDisableVertexAttribArray(m_colourLocation);
 	}
 
-	void setProjectionMatrix(const Matrix4f& mProjectionMatrix)
+	void setProjectionMatrix(const Matrix4f& mProjectionMatrix) const
 	{
 		glUniformMatrix4fv(m_projectionMatrixLocation, 1, GL_FALSE, mProjectionMatrix[0]);
 	}
 
-	void setModelViewMatrix(const Matrix4f& mModelViewMatrix)
+	void setModelViewMatrix(const Matrix4f& mModelViewMatrix) const
 	{
 		glUniformMatrix4fv(m_modelViewMatrixLocation, 1, GL_FALSE, mModelViewMatrix[0]);
 	}
 	
+	void setParameter(const std::string& name, float x)
+	{
+		if (m_programID)
+		{
+			// Enable program
+			Shader2D::bind(this);
+
+			// Get parameter location and assign it new values
+			GLint location = getParamLocation(name);
+			if (location != -1)
+			{
+				glUniform1f(location, x);
+			}
+
+			// Disable program
+			Shader2D::bind(NULL);
+		}
+	}
+
+	void setParameter(const std::string& name, float x, float y)
+	{
+		if (m_programID)
+		{
+			// Enable program
+			Shader2D::bind(this);
+
+			// Get parameter location and assign it new values
+			GLint location = getParamLocation(name);
+			if (location != -1)
+			{
+				glUniform2f(location, x, y);
+			}
+
+			// Disable program
+			Shader2D::bind(NULL);
+		}
+	}
+
+	void setParameter(const std::string& name, const Vector2f& v)
+	{
+		setParameter(name, v.x, v.y);
+	}
+
 private:
+
+	int getAttributeLocation(const std::string& name)
+	{
+		int location = glGetAttribLocation(m_programID, name.c_str());
+
+		if (location == -1)
+		{
+			std::cout << "Parameter \"" << name << "\" not found in shader" << std::endl;
+		}
+
+		return location;
+	}
+
+	typedef std::map<std::string, int> ParamTable;
+
+	int getParamLocation(const std::string& name)
+	{
+		// Check the cache
+		ParamTable::const_iterator it = m_params.find(name);
+		
+		if (it != m_params.end())
+		{
+			// Already in cache, return it
+			return it->second;
+		}
+		else
+		{
+			// Not in cache, request the location from OpenGL
+			int location = glGetUniformLocation(m_programID, name.c_str());
+			m_params.insert(std::make_pair(name, location));
+
+			if (location == -1)
+			{
+				std::cout << "Parameter \"" << name << "\" not found in shader" << std::endl;
+			}
+
+			return location;
+		}
+	}
+
+	ParamTable m_params;
 
 	GLint m_positionLocation;
 	GLint m_texCoordLocation;
@@ -92,6 +182,8 @@ private:
 	GLint m_modelViewMatrixLocation;
 
 	int m_programID;
+	int frag;
+	int vert;
 
 	bool compile(const std::vector<char>& buffer, int shader);
 };

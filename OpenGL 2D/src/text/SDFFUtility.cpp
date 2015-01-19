@@ -50,7 +50,7 @@ bool loadSDFF(const std::string& filename, MetricsData& metrics, std::vector<uns
 
 	int imageSize = in.read<int>();
 
-	int realImagesize = std::sqrt(imageSize);
+	int realImagesize = static_cast<int>(std::sqrt(imageSize));
 	std::cout << "Image dimensions: " << realImagesize << "x" << realImagesize << std::endl << std::endl;
 	imageSize *= 4;
 	pixels.resize(imageSize);

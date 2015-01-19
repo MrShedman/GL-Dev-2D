@@ -6,6 +6,7 @@
 #include "..\math\Vector.h"
 #include "Color.h"
 #include "Vertex.hpp"
+#include "Image.hpp"
 
 class Texture
 {
@@ -15,11 +16,15 @@ public:
 
 	~Texture();
 
+	Texture(const Texture& copy);
+
 	bool loadFromFile(const std::string& filename);
 
-	bool loadFromMemory(unsigned char* pixels, int width, int height);
+	bool loadFromImage(const Image& image);
 
-	bool loadFromMemory(std::vector<unsigned char>& pixels, int width, int height);
+	bool loadFromMemory(const unsigned char* pixels, int width, int height);
+
+	bool loadFromMemory(const std::vector<unsigned char>& pixels, int width, int height);
 
 	Vector2i getSize() const;
 

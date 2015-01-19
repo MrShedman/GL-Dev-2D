@@ -16,7 +16,7 @@ namespace
 
 			for (std::size_t i = 1; i < vertices.size(); ++i)
 			{
-				Vector2f position = vertices[i].position;
+				Vector2f position(vertices[i].position.x, vertices[i].position.y);
 
 				// Update left and right
 				if (position.x < left)
@@ -38,11 +38,6 @@ namespace
 			// Array is empty
 			return RectF();
 		}
-	}
-
-	Vector2f computeNormal(const Vector2f& p1, const Vector2f& p2)
-	{
-		return Vector2f(p1.y - p2.y, p2.x - p1.x).Normalized();
 	}
 }
 
@@ -232,14 +227,45 @@ void Shape::updateOutline()
 	{
 		unsigned int index = i + 1;
 
+		Vector3f p0 = (i == 0) ? m_vertices[count].position : m_vertices[index - 1].position;
+		Vector3f p1 = m_vertices[index].position;
+		Vector3f p2 = m_vertices[index + 1].position;
+
+		Vector3f n1 = (p0 - p1).Normalized();
+		Vector3f n2 = (p1 - p2).Normalized();
+
+		if (n1.Dot(m_vertices[0].position - p1) > 0)
+		{
+			n1 = n1.inverted();
+		}
+		if (n2.Dot(m_vertices[0].position - p1) > 0)
+		{
+			n2 = n2.inverted();
+		}
+
+		float factor = 1.f + n1.Dot(n2);//(n1.x * n2.x + n1.y * n2.y);
+		Vector3f normal = (n1 + n2) / factor; 
+
+	/*	Vector2f p0;
+
 		// Get the two segments shared by the current point
-		Vector2f p0 = (i == 0) ? m_vertices[count].position : m_vertices[index - 1].position;
-		Vector2f p1 = m_vertices[index].position;
-		Vector2f p2 = m_vertices[index + 1].position;
+		if (i == 0)
+		{
+			p0.x = m_vertices[count].position.x;
+			p0.y = m_vertices[count].position.y;
+		}
+		else
+		{
+			p0.x = m_vertices[index - 1].position.x;
+			p0.y = m_vertices[index - 1].position.y;
+		}
+
+		Vector2f p1(m_vertices[index].position.x, m_vertices[index].position.y);
+		Vector2f p2(m_vertices[index + 1].position.x, m_vertices[index + 1].position.y);
 
 		// Compute their normal
-		Vector2f n1 = computeNormal(p0, p1);
-		Vector2f n2 = computeNormal(p1, p2);
+		Vector2f n1 = (p0 - p1).Normalized();
+		Vector2f n2 = (p1 - p2).Normalized();
 
 		// Make sure that the normals point towards the outside of the shape
 		// (this depends on the order in which the points were defined)
@@ -253,8 +279,8 @@ void Shape::updateOutline()
 		}
 
 		// Combine them to get the extrusion direction
-		float factor = 1.f + (n1.x * n2.x + n1.y * n2.y);
-		Vector2f normal = (n1 + n2) / factor;
+		float factor = 1.f + n1.Dot(n2);//(n1.x * n2.x + n1.y * n2.y);
+		Vector2f normal = (n1 + n2) / factor;*/
 
 		// Update the outline points
 		m_outlineVertices[i * 2 + 0].position = p1;
@@ -310,7 +336,7 @@ void Shape::generateVBO()
 	//Vertex data
 	std::vector<GLuint> indices(verticesSize);
 
-	for (int i = 0; i < verticesSize; ++i)
+	for (size_t i = 0; i < verticesSize; ++i)
 	{
 		indices[i] = i;
 	}
@@ -337,7 +363,7 @@ void Shape::generateVBO()
 		//Vertex data
 		std::vector<GLuint> outlineIndices(outlineVerticesSize);
 
-		for (int i = 0; i < outlineVerticesSize; ++i)
+		for (size_t i = 0; i < outlineVerticesSize; ++i)
 		{
 			outlineIndices[i] = i;
 		}

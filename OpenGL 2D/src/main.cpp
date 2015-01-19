@@ -6,7 +6,14 @@
 
 int main()
 {
-	Application app(1280u, 720u, "OpenGL 2D");
+	ContextSettings settings;
+	settings.majorVersion = 3;
+	settings.minorVersion = 2;
+	settings.core = true;
+
+	Window window(VideoMode(1280, 720), "OpenGL 2D", Style::Close, settings);
+
+	Application app(window);
 
 	app.run();
 

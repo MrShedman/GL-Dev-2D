@@ -23,7 +23,7 @@ namespace
 			return false;
 		}
 
-		glGetError();
+		std::cout << glGetError();
 		return true;
 	}
 
@@ -48,6 +48,7 @@ m_ownsWindow(true)
 
 	makeCurrent();
 
+	//now that we have a dummy context we can initialize glew
 	initGlew();
 }
 
@@ -81,6 +82,7 @@ GlContext::~GlContext()
 			wglMakeCurrent(NULL, NULL);
 		}
 
+		std::cout << "Destroying Context" << std::endl;
 		wglDeleteContext(m_context);
 	}
 
@@ -125,32 +127,25 @@ void GlContext::createContext(unsigned int bitsPerPixel, const ContextSettings& 
 	// Save the creation settings
 	m_settings = settings;
 
-	// Let's find a suitable pixel format
-	int bestFormat = 0;
+	// Setup a pixel format descriptor from the rendering settings
+	PIXELFORMATDESCRIPTOR descriptor;
+	ZeroMemory(&descriptor, sizeof(descriptor));
+	descriptor.nSize = sizeof(descriptor);
+	descriptor.nVersion = 1;
+	descriptor.iLayerType = PFD_MAIN_PLANE;
+	descriptor.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+	descriptor.iPixelType = PFD_TYPE_RGBA;
+	descriptor.cColorBits = static_cast<BYTE>(bitsPerPixel);
+	descriptor.cDepthBits = static_cast<BYTE>(m_settings.depthBits);
+	descriptor.cStencilBits = static_cast<BYTE>(m_settings.stencilBits);
+	descriptor.cAlphaBits = bitsPerPixel == 32 ? 8 : 0;
 
-	// Find a pixel format with no antialiasing, if not needed or not supported
+	// Get the pixel format that best matches our requirements
+	int bestFormat = ChoosePixelFormat(m_deviceContext, &descriptor);
 	if (bestFormat == 0)
 	{
-		// Setup a pixel format descriptor from the rendering settings
-		PIXELFORMATDESCRIPTOR descriptor;
-		ZeroMemory(&descriptor, sizeof(descriptor));
-		descriptor.nSize = sizeof(descriptor);
-		descriptor.nVersion = 1;
-		descriptor.iLayerType = PFD_MAIN_PLANE;
-		descriptor.dwFlags = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-		descriptor.iPixelType = PFD_TYPE_RGBA;
-		descriptor.cColorBits = static_cast<BYTE>(bitsPerPixel);
-		descriptor.cDepthBits = static_cast<BYTE>(m_settings.depthBits);
-		descriptor.cStencilBits = static_cast<BYTE>(m_settings.stencilBits);
-		descriptor.cAlphaBits = bitsPerPixel == 32 ? 8 : 0;
-
-		// Get the pixel format that best matches our requirements
-		bestFormat = ChoosePixelFormat(m_deviceContext, &descriptor);
-		if (bestFormat == 0)
-		{
-			return;
-		}
-	}
+		return;
+	}	
 
 	// Extract the depth and stencil bits from the chosen format
 	PIXELFORMATDESCRIPTOR actualFormat;
@@ -169,12 +164,7 @@ void GlContext::createContext(unsigned int bitsPerPixel, const ContextSettings& 
 	// Create the OpenGL context -- first try context versions >= 3.0 if it is requested (they require special code)
 	while (!m_context && (m_settings.majorVersion >= 3))
 	{
-		int profile = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
-
-		if (settings.core)
-		{
-			profile = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
-		}
+		int profile = settings.core == true ? WGL_CONTEXT_CORE_PROFILE_BIT_ARB : WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
 
 		int attributes[] =
 		{

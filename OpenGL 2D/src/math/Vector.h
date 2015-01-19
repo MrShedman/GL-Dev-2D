@@ -56,7 +56,6 @@ public:
 		return Vector2<T>(-x, -y);
 	}
 
-
 	inline Vector2<T> Max(const Vector2<T>& rhs) const
 	{
 		Vector2<T> result;
@@ -187,6 +186,13 @@ public:
 		z(rhs.z)
 	{}
 
+	Vector3<T>(const Vector2<T>& rhs, float z = 0.f)
+		:
+		x(rhs.x),
+		y(rhs.y),
+		z(z)
+	{}
+
 	template<typename U>
 	Vector3<T>(const Vector3<U>& rhs)
 		:
@@ -216,6 +222,11 @@ public:
 		const T sine = std::sin(-angle);
 
 		return this->Cross(axis * sine) + (*this * cosine) + axis * this->Dot(axis * (1 - cosine));
+	}
+
+	inline Vector3<T> inverted() const
+	{
+		return Vector3<T>(-x, -y, -z);
 	}
 
 	inline Vector3<T> Reflect(const Vector3<T>& normal) const
@@ -508,3 +519,5 @@ typedef Vector2<int> Vector2i;
 typedef Vector2<float> Vector2f;
 typedef Vector3<float> Vector3f;
 typedef Vector4<float> Vector4f;
+
+std::ostream& operator<< (std::ostream& os, const Vector3f& v);

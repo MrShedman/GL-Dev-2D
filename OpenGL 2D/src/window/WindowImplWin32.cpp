@@ -2,7 +2,7 @@
 #include "WindowStyle.hpp"
 #include <GL/gl.h>
 #include <vector>
-#include "Utilities.h"
+#include "..\system\Utilities.h"
 
 namespace
 {

@@ -12,13 +12,34 @@ mSpaceWidth(0.0f)
 {
 }
 
+Font::Font(const Font& copy)
+:
+mInvalid(copy.mInvalid),
+mFamily(copy.mFamily),
+mFontSize(copy.mFontSize),
+mLeading(copy.mLeading),
+mAscent(copy.mAscent),
+mDescent(copy.mDescent),
+mSpaceWidth(copy.mSpaceWidth),
+m_textureSize(copy.m_textureSize),
+m_texture(copy.m_texture),
+m_metrics(copy.m_metrics)
+{
+
+}
+
+#include "..\window\Clock.h"
+
 bool Font::loadFromFile(const std::string& filename)
 {
+	Clock t1;
 	std::vector<unsigned char> pixels;
 
 	loadSDFF(filename, m_metrics, pixels);
 
-	int dimensions = std::sqrt(pixels.size() / 4);
+	std::cout << "sdff: " << t1.getElapsedTime().asMilliseconds() << "ms" << std::endl;
+
+	int dimensions = static_cast<int>(std::sqrt(pixels.size() / 4));
 	m_textureSize = Vector2i(dimensions, dimensions);
 
 	return m_texture.loadFromMemory(pixels, m_textureSize.x, m_textureSize.y);
@@ -160,7 +181,7 @@ float Font::measureWidth(const std::string &text, float fontSize, bool precise) 
 	return (offset + adjust) * (fontSize / mFontSize);
 }
 
-Texture* Font::getTexture()
+const Texture* Font::getTexture() const
 {
 	return &m_texture;
 }

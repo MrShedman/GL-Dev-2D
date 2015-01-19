@@ -1,9 +1,11 @@
 #pragma once
 
 #include "..\math\Matrix.h"
+#include "..\app\ResourceIdentifiers.hpp"
 
 class Texture;
 class Shader2D;
+class CameraPersp;
 
 class RenderStates
 {
@@ -15,15 +17,20 @@ public:
 
 	RenderStates(const Matrix4f& theTransform);
 
-	RenderStates(Texture* theTexture);
+	RenderStates(const Texture* theTexture);
 
-	RenderStates(Shader2D* theShader);
+	RenderStates(const Shader2D* theShader);
 
 	//RenderStates(const BlendMode& theBlendMode, const Transform& theTransform, const Texture* theTexture, const Shader* theShader);
 
+	CameraPersp* cam;
 
 	//BlendMode      blendMode; ///< Blending mode
 	Matrix4f	transform; ///< Transform
-	Texture*	texture;   ///< Texture
-	Shader2D*	shader;    ///< Shader
+
+	const Texture*	texture;   ///< Texture
+	const TextureHolder* textureHolder;
+
+	const Shader2D* shader;
+	const ShaderHolder* shaderHolder;
 };

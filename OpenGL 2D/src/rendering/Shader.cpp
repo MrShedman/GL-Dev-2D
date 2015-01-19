@@ -47,32 +47,6 @@ namespace
 			free(infoLog);
 		}
 	}
-
-	bool getAttributeLocation(int programID, const std::string& name, GLint& location)
-	{
-		location = glGetAttribLocation(programID, name.c_str());
-		
-		if (location == -1)
-		{
-			std::cout << name << " is not a valid glsl program variable!" << std::endl;
-			return false;
-		}
-
-		return true;
-	}
-
-	bool getUniformLocation(int programID, const std::string& name, GLint& location)
-	{
-		location = glGetUniformLocation(programID, name.c_str());
-
-		if (location == -1)
-		{
-			std::cout << name << " is not a valid glsl program variable!" << std::endl;
-			return false;
-		}
-
-		return true;
-	}
 }
 
 Shader2D::Shader2D()
@@ -86,7 +60,9 @@ Shader2D::~Shader2D()
 	m_programID = 0;
 }
 
-bool Shader2D::loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename)
+#include "..\window\Clock.h"
+
+bool Shader2D::loadFromFile(const std::string& vertexShaderFilename, const std::string& fragmentShaderFilename, Desc c)
 {
 	// Read the vertex shader file
 	std::vector<char> vertexShader;
@@ -104,8 +80,8 @@ bool Shader2D::loadFromFile(const std::string& vertexShaderFilename, const std::
 		return false;
 	}
 
-	int frag = glCreateShader(GL_FRAGMENT_SHADER);
-	int vert = glCreateShader(GL_VERTEX_SHADER);
+	frag = glCreateShader(GL_FRAGMENT_SHADER);
+	vert = glCreateShader(GL_VERTEX_SHADER);
 
 	if (frag == 0)
 	{
@@ -144,33 +120,17 @@ bool Shader2D::loadFromFile(const std::string& vertexShaderFilename, const std::
 		return false;
 	}
 
-	if (!getAttributeLocation(m_programID, "LVertexPos2D", m_positionLocation))
-	{
+	m_positionLocation = getAttributeLocation(c.vertex);
+	m_texCoordLocation = getAttributeLocation(c.texture);
+	m_colourLocation = getAttributeLocation(c.color);
 
-	}
-
-	if (!getAttributeLocation(m_programID, "LTexCoord", m_texCoordLocation))
-	{
-
-	}
-
-	if (!getAttributeLocation(m_programID, "LVertexColor", m_colourLocation))
-	{
-
-	}
-
-	if (!getUniformLocation(m_programID, "LProjectionMatrix", m_projectionMatrixLocation))
-	{
-
-	}
-
-	if (!getUniformLocation(m_programID, "LModelViewMatrix", m_modelViewMatrixLocation))
-	{
-
-	}
+	m_projectionMatrixLocation = getParamLocation("LProjectionMatrix");
+	m_modelViewMatrixLocation = getParamLocation("LModelViewMatrix");
 
 	glDetachShader(m_programID, frag);
 	glDetachShader(m_programID, vert);
+	glDeleteShader(frag);
+	glDeleteShader(vert);
 
 	return true;
 }

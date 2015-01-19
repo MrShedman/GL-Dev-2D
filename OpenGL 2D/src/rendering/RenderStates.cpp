@@ -27,7 +27,7 @@ shader(NULL)
 }
 */
 
-RenderStates::RenderStates(Texture* theTexture) :
+RenderStates::RenderStates(const Texture* theTexture) :
 //blendMode(BlendAlpha),
 transform(),
 texture(theTexture),
@@ -35,7 +35,7 @@ shader(NULL)
 {
 }
 
-RenderStates::RenderStates(Shader2D* theShader) :
+RenderStates::RenderStates(const Shader2D* theShader) :
 //blendMode(BlendAlpha),
 transform(),
 texture(NULL),

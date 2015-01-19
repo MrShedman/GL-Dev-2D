@@ -2,6 +2,7 @@
 
 #include "..\math\Vector.h"
 #include "..\math\Matrix.h"
+#include "..\math\Quaternion.h"
 
 class Transform
 {
@@ -11,37 +12,47 @@ public:
 
 	virtual ~Transform();
 
-	void setPosition(float x, float y);
+	void setPosition(float x, float y, float z = 0);
 
-	void setPosition(const Vector2f& position);
+	void setPosition(const Vector3f& position);
 
 	void setRotation(float angle);
 
-	void setScale(float factorX, float factorY);
+	void setRotation(const Vector3f& axis, float angle);
 
-	void setScale(const Vector2f& factors);
+	void setRotation(const Quaternion& rotation);
 
-	void setOrigin(float x, float y);
+	void setScale(float factorX, float factorY, float factorZ = 1);
 
-	void setOrigin(const Vector2f& origin);
+	void setScale(const Vector3f& factors);
 
-	const Vector2f& getPosition() const;
+	void setOrigin(float x, float y, float z = 0);
 
-	float getRotation() const;
+	void setOrigin(const Vector3f& origin);
 
-	const Vector2f& getScale() const;
+	const Vector3f& getPosition() const;
 
-	const Vector2f& getOrigin() const;
+	float get2DRotation() const;
 
-	void move(float offsetX, float offsetY);
+	const Quaternion& getRotation() const;
 
-	void move(const Vector2f& offset);
+	const Vector3f& getScale() const;
+
+	const Vector3f& getOrigin() const;
+
+	void move(float offsetX, float offsetY, float offsetZ = 0);
+
+	void move(const Vector3f& offset);
 
 	void rotate(float angle);
 
-	void scale(float factorX, float factorY);
+	void rotate(const Vector3f& axis, float angle);
 
-	void scale(const Vector2f& factor);
+	void rotate(const Quaternion& rotation);
+
+	void scale(float factorX, float factorY, float factorZ = 1);
+
+	void scale(const Vector3f& factor);
 
 	const Matrix4f& getTransform() const;
 
@@ -49,10 +60,10 @@ public:
 
 private:
 
-	Vector2f          m_origin;                     ///< Origin of translation/rotation/scaling of the object
-	Vector2f          m_position;                   ///< Position of the object in the 2D world
-	float             m_rotation;                   ///< Orientation of the object, in degrees
-	Vector2f          m_scale;                      ///< Scale of the object
+	Vector3f          m_origin;                     ///< Origin of translation/rotation/scaling of the object
+	Vector3f          m_position;                   ///< Position of the object in the 2D world
+	Quaternion		  m_rotation;					///< Orientation of the object
+	Vector3f          m_scale;                      ///< Scale of the object
 	mutable Matrix4f  m_transform;                  ///< Combined transformation of the object
 	mutable bool      m_transformNeedUpdate;        ///< Does the transform need to be recomputed?
 	mutable Matrix4f  m_inverseTransform;           ///< Combined transformation of the object

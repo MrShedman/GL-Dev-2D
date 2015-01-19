@@ -24,6 +24,19 @@ public:
 
 	}
 
+	Text(const std::string& string, const Font& font, unsigned int characterSize = 30)
+		:
+	mInvalid(true),
+	mBoundsInvalid(true),
+	mAlignment(LEFT),
+	mBoundary(WORD),
+	mFontSize(characterSize),
+	mLineSpace(1.0f)
+	{
+		setText(string);
+		setFont(font);
+	}
+
 	~Text()
 	{
 		if (mVBOID != 0)
@@ -90,7 +103,7 @@ public:
 	}
 
 	std::string	getFontFamily() const { if (m_font) return m_font->getFamily(); else return std::string(); }
-	void		setFont(Font& font) { m_font = &font; mInvalid = true; }
+	void		setFont(const Font& font) { m_font = &font; mInvalid = true; }
 
 	float		getFontSize() const { return mFontSize; }
 	void		setFontSize(float size) { mFontSize = size; mInvalid = true; }
@@ -120,7 +133,7 @@ public:
 
 	bool newLine(Vector2i& cursor)
 	{
-		cursor.x = 0.0f;
+		cursor.x = 0;
 		cursor.y += getLeading();
 
 		return (getHeight() == 0.0f || cursor.y < getHeight());
@@ -158,5 +171,5 @@ private:
 
 	std::vector<Vertex> m_vertices;
 	std::vector<GLuint>	mIndices;
-	Font* m_font;
+	const Font* m_font;
 };

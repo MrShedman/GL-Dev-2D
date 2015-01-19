@@ -14,16 +14,23 @@
 #include "text\Text.hpp"
 
 #include "rendering\RectangleShape.hpp"
+#include "rendering\RenderTexture.hpp"
+
+#include "state\StateStack.hpp"
+#include "resource management\ResourceHolder.hpp"
+#include "app\ResourceIdentifiers.hpp"
 
 class Application
 {
 public:
 
-	Application(unsigned int width, unsigned int height, const std::string& title);
+	Application(Window& window);
 
 	void getInput();
 	void update(Time dt);
 	void render();
+
+	void loadResources();
 
 	void run();
 
@@ -31,31 +38,21 @@ public:
 
 private:
 
-	std::string txt;
+	static const Time timePerFrame;
+
+	bool m_isOpen;
+
+	Clock clock;
 
 	GLuint vao;
 
-	Font font;
-	Text text;
+	TextureHolder	mTextures;
+	FontHolder		mFonts;
+	ShaderHolder	mShaders;
 
-	RenderTarget2D target;
+	RenderTarget2D	target;
 
-	Sprite sprite2;
-	Sprite sprite;
+	StateStack		mStateStack;
 
-	Sprite backgroundSprite;
-
-	Texture background;
-
-	Texture texture2;
-	Texture texture;
-	
-	Shader2D sdfShader;
-	Shader2D shader;
-
-	static const Time timePerFrame;
-
-	Window window;
-
-	RectangleShape shape;
+	Window&			window;
 };

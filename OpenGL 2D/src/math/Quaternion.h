@@ -189,3 +189,5 @@ public:
 		return Quaternion(nx, ny, nz, nw);
 	}
 };
+
+std::ostream& operator<< (std::ostream& os, const Quaternion& q);

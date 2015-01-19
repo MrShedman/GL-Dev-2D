@@ -14,6 +14,8 @@ public:
 
 	Font();
 
+	Font(const Font& copy);
+
 	bool loadFromFile(const std::string& filename);
 	
 	std::string getFamily() const { return mFamily; }
@@ -55,7 +57,7 @@ public:
 
 	float		measureWidth(const std::string &text, float fontSize = 12.0f, bool precise = true) const;
 
-	Texture* getTexture();
+	const Texture* getTexture() const;
 
 private:
 

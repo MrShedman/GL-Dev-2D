@@ -34,7 +34,7 @@ void main()
 
     // ------- (comment this block out to get your original behavior)
     // Supersample, 4 extra points
-    float dscale = 0.354 * 0.2; // half of 1/sqrt2; you can play with this
+    float dscale = 0.354 / smoothness; // half of 1/sqrt2; you can play with this
     vec2 duv = dscale * vec2(dFdx(texCoord) + dFdy(texCoord));
     vec4 box = vec4(texCoord-duv, texCoord+duv);
 
@@ -48,5 +48,6 @@ void main()
     alpha = (alpha + 0.5 * asum) / 3.;
     // -------
 
-    color = vec4(vertexColor.rgb, alpha);
+   	color.rgb =  texture(m_texture[1], texCoord).rgb * vertexColor.rgb;
+	color.a = vertexColor.a * alpha;
 }

@@ -3,7 +3,8 @@
 #include <iostream>
 
 #include "..\Application.hpp"
-#include "..\math\Rect.h"
+#include "..\math\Rect.h" 
+#define STB_IMAGE_IMPLEMENTATION
 #include "..\staticLibs\stb_image.h"
 
 Texture::Texture()
@@ -25,21 +26,42 @@ Texture::~Texture()
 	}
 }
 
+Texture::Texture(const Texture& copy)
+{
+	if (copy.m_textureID)
+	{
+		m_isSmooth = copy.m_isSmooth;
+
+		m_textureID = copy.m_textureID;
+
+		m_width = copy.m_width;
+		m_height = copy.m_height;
+	}
+}
+
 bool Texture::loadFromFile(const std::string& filename)
 {
-	int bytesPerPixel;
-	unsigned char* data = stbi_load(filename.c_str(), &m_width, &m_height, &bytesPerPixel, 4);
+	Image image;
 
-	if (data == nullptr)
+	if (!image.loadFromFile(filename))
 	{
-		std::cout << "Unable to load texture: " << filename << std::endl;
 		return false;
 	}
 
-	return loadFromMemory(data, m_width, m_height);
+	return loadFromImage(image);
 }
 
-bool Texture::loadFromMemory(unsigned char* pixels, int width, int height)
+bool Texture::loadFromImage(const Image& image)
+{
+	return loadFromMemory(image.getData(), image.getSize().x, image.getSize().y);
+}
+
+bool Texture::loadFromMemory(const std::vector<unsigned char>& pixels, int width, int height)
+{
+	return loadFromMemory(pixels.data(), width, height);
+}
+
+bool Texture::loadFromMemory(const unsigned char* pixels, int width, int height)
 {
 	m_width = width;
 	m_height = height;
@@ -63,31 +85,6 @@ bool Texture::loadFromMemory(unsigned char* pixels, int width, int height)
 
 	m_isSmooth = true;
 
-	return true;
-}
-
-bool Texture::loadFromMemory(std::vector<unsigned char>& pixels, int width, int height)
-{
-	m_width = width;
-	m_height = height;
-
-	glGenTextures(1, &m_textureID);
-
-	//Bind texture ID
-	glBindTexture(GL_TEXTURE_2D, m_textureID);
-
-	//Generate texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-
-	//Set texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	//Unbind texture
-	glBindTexture(GL_TEXTURE_2D, NULL);
-	m_isSmooth = true;
 	return true;
 }
 

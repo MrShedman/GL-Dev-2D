@@ -37,11 +37,35 @@
     <Filter Include="Header Files\Text">
       <UniqueIdentifier>{914cb61e-e7a2-4eb0-9f12-07d161f6f720}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Utility">
-      <UniqueIdentifier>{3f31fe61-e613-43ed-a4fd-06f455aa6592}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Text">
       <UniqueIdentifier>{2dc57420-485d-4d5b-b450-49c323c77b25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\App">
+      <UniqueIdentifier>{c51fb316-66b5-4b5f-9b6a-b0b598ea7dad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Resource Management">
+      <UniqueIdentifier>{c9ee5973-2979-441f-89ab-a4a51293d3e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{126aea7b-ea54-417a-b0fb-ff4c127c9ed7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\State">
+      <UniqueIdentifier>{480d5f7a-bb53-4721-9886-aca0be663e89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\App">
+      <UniqueIdentifier>{34ffbeae-0a5b-467d-96ed-ce489ffc3466}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{3518bc08-b92b-47b5-914c-03dd2558cc65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\State">
+      <UniqueIdentifier>{37e3a195-2f9f-47f7-b8bb-687824df93a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\System">
+      <UniqueIdentifier>{9ecbc0e1-69cf-424b-b961-eaa0c9ee84d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\System">
+      <UniqueIdentifier>{48b272dc-caf9-4e18-9181-61ebe57248b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -61,9 +85,6 @@
       <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="src\window\Time.cpp">
-      <Filter>Source Files\Window</Filter>
-    </ClCompile>
-    <ClCompile Include="src\window\Utilities.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
     <ClCompile Include="src\window\VideoMode.cpp">
@@ -123,6 +144,54 @@
     <ClCompile Include="src\window\GLCheck.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
+    <ClCompile Include="src\rendering\Camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\RenderTexture.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\GameState.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\MenuState.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\Button.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\Container.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\Toggle.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\State.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\StateStack.cpp">
+      <Filter>Source Files\State</Filter>
+    </ClCompile>
+    <ClCompile Include="src\system\Utilities.cpp">
+      <Filter>Source Files\System</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\Component.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\app\SettingsState.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state\LoadingState.cpp">
+      <Filter>Source Files\App</Filter>
+    </ClCompile>
+    <ClCompile Include="src\rendering\Image.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\Quaternion.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\MathHelper.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.hpp">
@@ -162,9 +231,6 @@
       <Filter>Header Files\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\window\Time.h">
-      <Filter>Header Files\Window</Filter>
-    </ClInclude>
-    <ClInclude Include="src\window\Utilities.h">
       <Filter>Header Files\Window</Filter>
     </ClInclude>
     <ClInclude Include="src\window\VideoMode.hpp">
@@ -233,9 +299,6 @@
     <ClInclude Include="src\text\Font.hpp">
       <Filter>Header Files\Text</Filter>
     </ClInclude>
-    <ClInclude Include="src\utility\BinaryStream.hpp">
-      <Filter>Header Files\Utility</Filter>
-    </ClInclude>
     <ClInclude Include="src\text\MetricsData.hpp">
       <Filter>Header Files\Text</Filter>
     </ClInclude>
@@ -260,5 +323,73 @@
     <ClInclude Include="src\window\GLCheck.hpp">
       <Filter>Header Files\Window</Filter>
     </ClInclude>
+    <ClInclude Include="src\rendering\RenderTexture.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\GameState.hpp">
+      <Filter>Header Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\MenuState.hpp">
+      <Filter>Header Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\ResourceIdentifiers.hpp">
+      <Filter>Header Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\StateIdentifiers.hpp">
+      <Filter>Header Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Button.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Component.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Container.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Slider.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Toggle.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\State.hpp">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\StateStack.hpp">
+      <Filter>Header Files\State</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resource management\ResourceHolder.hpp">
+      <Filter>Header Files\Resource Management</Filter>
+    </ClInclude>
+    <ClInclude Include="src\system\BinaryStream.hpp">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\system\Utilities.h">
+      <Filter>Header Files\System</Filter>
+    </ClInclude>
+    <ClInclude Include="src\app\SettingsState.hpp">
+      <Filter>Header Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state\LoadingState.hpp">
+      <Filter>Header Files\App</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\Image.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\Block.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\CameraPersp.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\gui\Slider.inl">
+      <Filter>Header Files\GUI</Filter>
+    </None>
+    <None Include="src\resource management\ResourceHolder.inl">
+      <Filter>Header Files\Resource Management</Filter>
+    </None>
   </ItemGroup>
 </Project>
