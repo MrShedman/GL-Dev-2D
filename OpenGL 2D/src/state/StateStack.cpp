@@ -20,14 +20,14 @@ void StateStack::update(Time dt)
 		}
 	}
 
-	/*for (auto itr = mStack.rbegin(); itr != mStack.rend(); ++itr)
+	/*for (std::vector<State::Ptr>::reverse_iterator itr = mStack.rbegin(); itr != mStack.rend(); ++itr)
 	{
 		if (!(*itr)->update(dt))
 		{
 			break;
 		}
 	}*/
-
+		
 	applyPendingChanges();
 }
 

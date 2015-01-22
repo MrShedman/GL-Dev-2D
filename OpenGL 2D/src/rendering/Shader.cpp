@@ -123,7 +123,7 @@ bool Shader2D::loadFromFile(const std::string& vertexShaderFilename, const std::
 	m_positionLocation = getAttributeLocation(c.vertex);
 	m_texCoordLocation = getAttributeLocation(c.texture);
 	m_colourLocation = getAttributeLocation(c.color);
-
+	std::cout << "position" << m_positionLocation << std::endl;
 	m_projectionMatrixLocation = getParamLocation("LProjectionMatrix");
 	m_modelViewMatrixLocation = getParamLocation("LModelViewMatrix");
 

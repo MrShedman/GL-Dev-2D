@@ -68,8 +68,18 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 	RectI viewport = getViewport(camera);
 	int top = getSize().y - viewport.bottom;
 	glViewport(viewport.left, top, viewport.getWidth(), viewport.getHeight());
-
+	
 	Shader2D::bind(states.shader);
+
+	//Enable vertex and texture coordinate arrays
+	states.shader->enableVertexPointer();
+	states.shader->enableTexCoordPointer();
+	states.shader->enableColourPointer();
+
+	//Set texture coordinate data
+	states.shader->setTexCoordPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
+	states.shader->setVertexPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+	states.shader->setColourPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
 
 	if (d)
 	{
@@ -81,11 +91,6 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 	}
 	
 	states.shader->setModelViewMatrix(states.transform);
-
-	//Enable vertex and texture coordinate arrays
-	states.shader->enableVertexPointer();
-	states.shader->enableTexCoordPointer();
-	states.shader->enableColourPointer();
 
 	if (states.texture != NULL)
 	{
@@ -100,21 +105,13 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 	//Update vertex buffer data
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCount * sizeof(Vertex), vertices);
 
-	//Set texture coordinate data
-	states.shader->setTexCoordPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
-	
-	states.shader->setVertexPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-
-	states.shader->setColourPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
-
 	static const GLenum modes[] = { GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
 		GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
 	
 	GLenum mode = modes[type];
-
 	//Draw using vertex data and index data
 	glDrawElements(mode, vertexCount, GL_UNSIGNED_INT, NULL);
-
+	
 	//Disable vertex and texture coordinate arrays
 	states.shader->disableVertexPointer();
 	states.shader->disableTexCoordPointer();

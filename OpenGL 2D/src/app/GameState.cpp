@@ -5,49 +5,47 @@
 #include "..\system\Utilities.h"
 
 GameState::GameState(StateStack& stack, Context context)
-:
-State(stack, context),
-mFont(context.fonts->get(Fonts::Main)),
-mText("Game", mFont),
-mBlocks()
+	:
+	State(stack, context),
+	mFont(context.fonts->get(Fonts::Main)),
+	mText("Game", mFont),
+	mBlocks()
 {
 	mBackgroundSprite.setTexture(context.textures->get(Textures::MenuBackground));
 
 	Util::scaleSpriteToFitWindow(mBackgroundSprite, *context.window);
 
-	
+
 	mText.renderMesh();
 	mText.setColor(Color::Magenta);
 	//text.setColor(Color::White);
 
 	cam.init(context.window);
 
-	auto t = context.textures->get(Textures::Texture2);
+	auto t = context.textures->get(Textures::MenuBackground);
 
-	int size = 1;
-	float scale = 1.1f;
+	int size = 5;
+	float scale = 10.f;
 
-	for (int i = 0; i < size; ++i)
+	for (int i = -size; i < size; ++i)
 	{
-		for (int j = 0; j < size; ++j)
+		for (int j = -size; j < size; ++j)
 		{
-			for (int k = 0; k < size; ++k)
+			for (int k = -size; k < size; ++k)
 			{
 				Block b;
 				b.create(1);
 				b.setPosition(i*scale, j*scale, k*scale);
+				b.setOrigin(i*scale, j*scale, k*scale);
 				//b.setScale(2, 4, 6);
 				//b.setRotation(Vector3f(1.0f, 1.0f, 0.0f), 45.0f);
-				b.setTexture(&t);
-					
+				//b.setTexture(&t);
+
 				mBlocks.push_back(b);
 			}
 		}
 	}
-
 }
-
-#include "..\rendering\Block.hpp"
 
 void GameState::draw()
 {
@@ -58,12 +56,18 @@ void GameState::draw()
 	states.shader = &states.shaderHolder->get(Shaders::Default);
 
 	//target.draw(mBackgroundSprite, states);
-
+	states.texture = &getContext().textures->get(Textures::ID::Texture1);
 	glEnable(GL_DEPTH_TEST);
 	states.cam = &cam;
+	static float x1 = 0;
+	float x = std::sin(2 * 3.1415* x1) + 2.f;
+	x /= 2.f;
+	x1 += 0.01f;
 	for (auto &b : mBlocks)
 	{
 		//b.move(Vector3f(0.1f, 0.1f, 0.1f));
+		b.rotate(0.001f);
+		b.setScale(x, x, x);
 		target.draw(b, states);
 	}
 

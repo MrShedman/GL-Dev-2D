@@ -75,7 +75,7 @@ void Application::loadResources()
 	d.color = "LVertexColor";
 
 	mShaders.load(Shaders::Default, "res/shaders/program.vert", "res/shaders/program.frag", d);
-	mShaders.load(Shaders::PostFX, "res/shaders/program.vert", "res/shaders/postFX.frag", d);
+	//mShaders.load(Shaders::PostFX, "res/shaders/program.vert", "res/shaders/postFX.frag", d);
 	mShaders.load(Shaders::SDFF, "res/shaders/program.vert", "res/shaders/sdf.frag", d);
 }
 
@@ -116,10 +116,10 @@ void Application::update(Time dt)
 
 void Application::render()
 {
-	window.clear(Color::White);//Color(35, 127, 229));
-
+	window.clear(Color::Black);//Color(35, 127, 229));
+	
 	mStateStack.draw();
-
+	
 	window.display();
 }
 
@@ -130,8 +130,6 @@ void Application::run()
 
 	while (m_isOpen)
 	{
-		render();
-
 		Time dt;
 		dt = clock.restart();
 		timeSinceLastUpdate += dt;
@@ -148,6 +146,7 @@ void Application::run()
 				close();
 			}
 		}
+		render();
 	}
 }
 
