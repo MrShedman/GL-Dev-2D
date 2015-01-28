@@ -85,6 +85,7 @@
     <ClCompile Include="src\gui\Container.cpp" />
     <ClCompile Include="src\gui\Toggle.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\math\Angle.cpp" />
     <ClCompile Include="src\math\MathHelper.cpp" />
     <ClCompile Include="src\math\Matrix.cpp" />
     <ClCompile Include="src\math\Quaternion.cpp" />
@@ -125,11 +126,14 @@
     <ClInclude Include="src\app\ResourceIdentifiers.hpp" />
     <ClInclude Include="src\app\SettingsState.hpp" />
     <ClInclude Include="src\app\StateIdentifiers.hpp" />
+    <ClInclude Include="src\gl\Buffer.hpp" />
+    <ClInclude Include="src\gl\GLCheck.h" />
     <ClInclude Include="src\gui\Button.hpp" />
     <ClInclude Include="src\gui\Component.hpp" />
     <ClInclude Include="src\gui\Container.hpp" />
     <ClInclude Include="src\gui\Slider.h" />
     <ClInclude Include="src\gui\Toggle.h" />
+    <ClInclude Include="src\math\Angle.hpp" />
     <ClInclude Include="src\math\MathHelper.h" />
     <ClInclude Include="src\math\Matrix.h" />
     <ClInclude Include="src\math\Quaternion.h" />
@@ -138,6 +142,7 @@
     <ClInclude Include="src\rendering\Block.hpp" />
     <ClInclude Include="src\rendering\Camera.hpp" />
     <ClInclude Include="src\rendering\CameraPersp.hpp" />
+    <ClInclude Include="src\rendering\Chunk.hpp" />
     <ClInclude Include="src\rendering\Color.h" />
     <ClInclude Include="src\rendering\Drawable.hpp" />
     <ClInclude Include="src\rendering\Image.hpp" />

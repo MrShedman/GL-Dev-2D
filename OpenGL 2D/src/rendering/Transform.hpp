@@ -48,6 +48,8 @@ public:
 
 	void rotate(const Vector3f& axis, float angle);
 
+	void rotate(const Vector3f& pivot, const Vector3f& axis, float angle);
+
 	void rotate(const Quaternion& rotation);
 
 	void scale(float factorX, float factorY, float factorZ = 1);
@@ -59,6 +61,8 @@ public:
 	const Matrix4f& getInverseTransform() const;
 
 private:
+
+	void update() const;
 
 	Vector3f          m_origin;                     ///< Origin of translation/rotation/scaling of the object
 	Vector3f          m_position;                   ///< Position of the object in the 2D world

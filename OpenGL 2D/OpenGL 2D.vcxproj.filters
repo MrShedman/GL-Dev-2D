@@ -67,6 +67,9 @@
     <Filter Include="Source Files\System">
       <UniqueIdentifier>{48b272dc-caf9-4e18-9181-61ebe57248b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\GL">
+      <UniqueIdentifier>{3773d285-2789-418a-8131-13e907b5b8af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -190,6 +193,9 @@
       <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="src\math\MathHelper.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\Angle.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
   </ItemGroup>
@@ -382,6 +388,18 @@
     </ClInclude>
     <ClInclude Include="src\rendering\CameraPersp.hpp">
       <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gl\GLCheck.h">
+      <Filter>Header Files\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gl\Buffer.hpp">
+      <Filter>Header Files\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\Chunk.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Angle.hpp">
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

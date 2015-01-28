@@ -7,6 +7,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "..\staticLibs\stb_image.h"
 
+#include "..\gl\GLCheck.h"
+
 Texture::Texture()
 {
 	m_isSmooth = false;
@@ -104,13 +106,13 @@ void Texture::bind(const Texture* texture, int unit)
 	{
 		// Bind the texture
 		glActiveTexture(GL_TEXTURE0 + unit);
-		glBindTexture(GL_TEXTURE_2D, texture->getID());
+		check_gl_error(glBindTexture(GL_TEXTURE_2D, texture->getID()));
 	}
 	else
 	{
 		// Bind no texture
 		glActiveTexture(GL_TEXTURE0 + unit);
-		glBindTexture(GL_TEXTURE_2D, NULL);
+		check_gl_error(glBindTexture(GL_TEXTURE_2D, NULL));
 	}
 }
 

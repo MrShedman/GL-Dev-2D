@@ -2,6 +2,7 @@
 
 #include "Vector.h"
 #include "Matrix.h"
+#include <iostream>
 
 class Quaternion : public Vector4<float>
 {
@@ -161,7 +162,7 @@ public:
 
 	inline Quaternion Conjugate() const 
 	{ 
-		return Quaternion(-x, -y, -z, w);
+		return Quaternion(-x, -y, -z, w)/LengthSq();
 	}
 	
 	inline Quaternion operator*(float rhs) const
@@ -181,12 +182,7 @@ public:
 
 	inline Quaternion operator*(const Vector3<float>& v) const
 	{
-		const float nw = -(x * v.x) - (y * v.y) - (z * v.z);
-		const float nx = (w * v.x) + (y * v.z) - (z * v.y);
-		const float ny = (w * v.y) + (z * v.x) - (x * v.z);
-		const float nz = (w * v.z) + (x * v.y) - (y * v.x);
-
-		return Quaternion(nx, ny, nz, nw);
+		return *this * Quaternion(v.x, v.y, v.z, 0.0f);
 	}
 };
 

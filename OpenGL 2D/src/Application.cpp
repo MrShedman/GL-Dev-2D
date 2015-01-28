@@ -32,7 +32,7 @@ mShaders(),
 mStateStack(State::Context(window, target, mTextures, mFonts, mShaders)),
 m_isOpen(true)
 {
-	//window.setVerticalSyncEnabled(true);
+	window.setVerticalSyncEnabled(true);
 
 	std::cout << "GPU: " << glGetString(GL_RENDERER) << "\n";
 	std::cout << "OpenGL version: " << glGetString(GL_VERSION) << "\n";
@@ -75,7 +75,7 @@ void Application::loadResources()
 	d.color = "LVertexColor";
 
 	mShaders.load(Shaders::Default, "res/shaders/program.vert", "res/shaders/program.frag", d);
-	//mShaders.load(Shaders::PostFX, "res/shaders/program.vert", "res/shaders/postFX.frag", d);
+	mShaders.load(Shaders::Instanced, "res/shaders/instanced.vert", "res/shaders/postFX.frag", d);
 	mShaders.load(Shaders::SDFF, "res/shaders/program.vert", "res/shaders/sdf.frag", d);
 }
 

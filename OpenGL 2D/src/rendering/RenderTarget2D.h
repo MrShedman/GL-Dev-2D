@@ -37,6 +37,8 @@ public:
 
 	void draw(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d = true);
 
+	void drawInstanced(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d = true);
+
 private:
 
 	Vector2u m_size;

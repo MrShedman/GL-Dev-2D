@@ -8,61 +8,48 @@
 #include "..\math\Vector.h"
 #include "..\math\MathHelper.h"
 
+#include "..\gl\Buffer.hpp"
 
 class Block : public Drawable, public Transform
 {
 public:
 
 	Block()
+		:
+		m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+		m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW),
+		m_texture(nullptr)
+	{}
+
+	Block(Block&& other) :
+		Drawable(std::move(other)),
+		Transform(std::move(other)),
+		m_verticesBuffer(std::move(other.m_verticesBuffer)),
+		m_indicesBuffer(std::move(other.m_indicesBuffer)),
+		m_vertices(std::move(other.m_vertices)),
+		m_indices(std::move(other.m_indices))
 	{
-		m_verticesVBO = 0;
-		m_indicesVBO = 0;
-		vao = 0;
-		m_texture = nullptr;
+		m_texture = other.m_texture;
 	}
 
+	Block& operator=(Block&& other)
+	{
+		if (this != &other)
+		{
+			m_verticesBuffer = std::move(other.m_verticesBuffer);
+			m_indicesBuffer = std::move(other.m_indicesBuffer);
+			m_vertices = std::move(other.m_vertices);
+			m_indices = std::move(other.m_indices);
+
+			m_texture = other.m_texture;
+		}
+
+		return *this;
+	}
 		
 	void create(float size)
 	{
-		/*addVertex(-1.0f, -1.0f, -1.0f); // triangle 1 : begin
-		addVertex(-1.0f, -1.0f, 1.0f);
-		addVertex(-1.0f, 1.0f, 1.0f); // triangle 1 : end
-		addVertex(1.0f, 1.0f, -1.0f); // triangle 2 : begin
-		addVertex(-1.0f, -1.0f, -1.0f);
-		addVertex(-1.0f, 1.0f, -1.0f); // triangle 2 : end
-		addVertex(1.0f, -1.0f, 1.0f);
-		addVertex(-1.0f, -1.0f, -1.0f);
-		addVertex(1.0f, -1.0f, -1.0f);
-		addVertex(1.0f, 1.0f, -1.0f);
-		addVertex(1.0f, -1.0f, -1.0f);
-		addVertex(-1.0f, -1.0f, -1.0f);
-		addVertex(-1.0f, -1.0f, -1.0f);
-		addVertex(-1.0f, 1.0f, 1.0f);
-		addVertex(-1.0f, 1.0f, -1.0f);
-		addVertex(1.0f, -1.0f, 1.0f);
-		addVertex(-1.0f, -1.0f, 1.0f);
-		addVertex(-1.0f, -1.0f, -1.0f);
-		addVertex(-1.0f, 1.0f, 1.0f);
-		addVertex(-1.0f, -1.0f, 1.0f);
-		addVertex(1.0f, -1.0f, 1.0f);
-		addVertex(1.0f, 1.0f, 1.0f);
-		addVertex(1.0f, -1.0f, -1.0f);
-		addVertex(1.0f, 1.0f, -1.0f);
-		addVertex(1.0f, -1.0f, -1.0f);
-		addVertex(1.0f, 1.0f, 1.0f);
-		addVertex(1.0f, -1.0f, 1.0f);
-		addVertex(1.0f, 1.0f, 1.0f);
-		addVertex(1.0f, 1.0f, -1.0f);
-		addVertex(-1.0f, 1.0f, -1.0f);
-		addVertex(1.0f, 1.0f, 1.0f);
-		addVertex(-1.0f, 1.0f, -1.0f);
-		addVertex(-1.0f, 1.0f, 1.0f);
-		addVertex(1.0f, 1.0f, 1.0f);
-		addVertex(-1.0f, 1.0f, 1.0f);
-		addVertex(1.0f, -1.0f, 1.0f);*/
-		
-
-			// bottom
+		// bottom
 		addVertex(-size, -size, -size, 0.0f, 0.0f);
 		addVertex(size, -size, -size, 1.0f, 0.0f);
 		addVertex(-size, -size, size, 0.0f, 1.0f);
@@ -110,76 +97,40 @@ public:
 		addVertex(size, size, -size, 0.0f, 0.0f);
 		addVertex(size, size, size, 0.0f, 1.0f);
 
-		indices.resize(m_vertices.size());
+		m_indices.resize(m_vertices.size());
 
 		for (size_t i = 0; i < m_vertices.size(); ++i)
 		{
-			indices[i] = i;
+			m_indices[i] = i;
 		}
 
 
-		genVBO();
+		m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
+		m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
 	}
 
-	~Block()
+	std::vector<Vector3f> getPositionData() const
 	{
-		if (m_verticesVBO != 0)
+		std::vector<Vector3f> positions;
+
+		for (auto &v : m_vertices)
 		{
-			//glDeleteBuffers(1, &m_verticesVBO);
+			positions.push_back(v.position);
 		}
-		if (m_indicesVBO != 0)
-		{
-			//glDeleteBuffers(1, &m_indicesVBO);
-		}
-
-		//std::cout << "destruction" << std::endl;
-	}
-
-	void genVBO()
-	{
-		if (vao != 0)
-		{
-			glDeleteVertexArrays(1, &vao);
-		}
-
-		// Create and bind a BO for vertex data
-		glGenBuffers(1, &m_verticesVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_verticesVBO);
-
-		// copy data into the buffer object7
-		glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_STATIC_DRAW);
-		
-		// Create and bind a BO for index data
-		
-		glGenBuffers(1, &m_indicesVBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicesVBO);
-
-		// copy data into the buffer object
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_vertices.size() * sizeof(GLuint), &indices[0], GL_STATIC_DRAW);
-
-		// At this point the VAO is set up with two vertex attributes
-		// referencing the same buffer object, and another buffer object
-		// as source for index data. We can now unbind the VAO, go do
-		// something else, and bind it again later when we want to render
-		// with it.
-		//glBindVertexArray(0);
 	}
 
 	virtual void draw(RenderTarget2D& target, RenderStates states) const
 	{
-		//std::cout << "before block vao: " << glGetError() << std::endl;
-	//	glBindVertexArray(0);
-		//glBindVertexArray(vao);
-		
-		//glBindVertexArray(vao);
-		glBindBuffer(GL_ARRAY_BUFFER, m_verticesVBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicesVBO);
-		//std::cout << "after block vao: " << glGetError() << std::endl;
+		m_verticesBuffer.bind();
+		m_indicesBuffer.bind();
+
+		states.texture = m_texture;
 		states.transform *= getTransform();
 
-		// Render the insid
-		//states.texture = m_texture;
 		target.draw(&m_vertices[0], m_vertices.size(), Triangles, states, false);
+
+		m_verticesBuffer.unbind();
+		m_indicesBuffer.unbind();
 	}
 
 	void addVertex(float x, float y, float z, float u, float v)
@@ -201,18 +152,16 @@ public:
 		m_vertices.push_back(Vertex(Vector3f(x, y, z), c, Vector2f(u, v)));
 	}
 
-	void setTexture(Texture *t)
+	void setTexture(const Texture& texture)
 	{
-		m_texture = t;
+		m_texture = &texture;
 	}
 
-	Texture* m_texture;
+	const Texture* m_texture;
 
-	GLuint vao;
+	Buffer m_verticesBuffer;
+	Buffer m_indicesBuffer;
 
-	GLuint m_verticesVBO;
-	GLuint m_indicesVBO;
-
-	std::vector<GLuint> indices;
+	std::vector<GLuint> m_indices;
 	std::vector<Vertex> m_vertices;
 };

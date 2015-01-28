@@ -29,6 +29,7 @@ namespace Shaders
 	enum ID
 	{
 		Default,
+		Instanced,
 		PostFX,
 		SDFF,
 		D3

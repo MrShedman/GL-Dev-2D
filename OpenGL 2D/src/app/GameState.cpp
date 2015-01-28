@@ -22,9 +22,9 @@ GameState::GameState(StateStack& stack, Context context)
 
 	cam.init(context.window);
 
-	auto t = context.textures->get(Textures::MenuBackground);
+	Texture& t = context.textures->get(Textures::Texture1);
 
-	int size = 5;
+	int size = 1;
 	float scale = 10.f;
 
 	for (int i = -size; i < size; ++i)
@@ -36,16 +36,21 @@ GameState::GameState(StateStack& stack, Context context)
 				Block b;
 				b.create(1);
 				b.setPosition(i*scale, j*scale, k*scale);
-				b.setOrigin(i*scale, j*scale, k*scale);
+				//b.setOrigin(0.f, 0.f, 0.f);
 				//b.setScale(2, 4, 6);
 				//b.setRotation(Vector3f(1.0f, 1.0f, 0.0f), 45.0f);
-				//b.setTexture(&t);
-
-				mBlocks.push_back(b);
+				b.setTexture(t);
+				mBlocks.push_back(std::move(b));
 			}
 		}
 	}
+
+//	glEnable(GL_CULL_FACE); // cull face
+//	glCullFace(GL_BACK); // cull back face
+//	glFrontFace(GL_CW);
 }
+
+static float m = 0.01f;
 
 void GameState::draw()
 {
@@ -56,7 +61,7 @@ void GameState::draw()
 	states.shader = &states.shaderHolder->get(Shaders::Default);
 
 	//target.draw(mBackgroundSprite, states);
-	states.texture = &getContext().textures->get(Textures::ID::Texture1);
+	//states.texture = &getContext().textures->get(Textures::ID::Texture1);
 	glEnable(GL_DEPTH_TEST);
 	states.cam = &cam;
 	static float x1 = 0;
@@ -66,10 +71,13 @@ void GameState::draw()
 	for (auto &b : mBlocks)
 	{
 		//b.move(Vector3f(0.1f, 0.1f, 0.1f));
-		b.rotate(0.001f);
-		b.setScale(x, x, x);
+		//b.setScale(x, x, x);
+		b.rotate(b.getOrigin(), Vector3f(10.0f, 0.f, 0.f), m);
+		
 		target.draw(b, states);
 	}
+
+	//std::cout << mBlocks[100].getPosition() << std::endl;
 
 	glDisable(GL_DEPTH_TEST);
 
@@ -104,6 +112,11 @@ bool GameState::handleEvent(const Event& event)
 			requestStackPush(States::Menu);
 		}
 	}
+	if (event.type == Event::MouseWheelMoved)
+	{
+		m += event.mouseWheel.delta / 1000.f;
+	}
+
 
 	Window& window = *getContext().window;
 

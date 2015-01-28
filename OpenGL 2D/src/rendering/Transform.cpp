@@ -2,7 +2,7 @@
 #include "..\math\MathHelper.h"
 
 Transform::Transform() :
-m_origin(0, 0, 1),
+m_origin(0, 0, 0),
 m_position(0, 0, 0),
 m_rotation(),
 m_scale(1, 1, 1),
@@ -116,7 +116,7 @@ void Transform::move(const Vector3f& offset)
 
 void Transform::rotate(float angle)
 {
-	rotate(m_origin, angle);
+	rotate(Vector3f(1, 0, 0), angle);
 }
 
 void Transform::rotate(const Vector3f& axis, float angle)
@@ -124,9 +124,23 @@ void Transform::rotate(const Vector3f& axis, float angle)
 	rotate(Quaternion(axis, angle));
 }
 
+void Transform::rotate(const Vector3f& pivot, const Vector3f& axis, float angle)
+{
+	Quaternion rotation = Quaternion(axis, angle).Normalized();
+
+	Vector3f vector = m_position - pivot;
+
+	Quaternion rotation2 = (rotation * vector);
+
+	vector = Vector3f(rotation2.x, rotation2.y, rotation2.z);
+
+	setPosition(pivot + vector);
+	setRotation(rotation);
+}
+
 void Transform::rotate(const Quaternion& rotation)
 {
-	setRotation(Quaternion((rotation * m_rotation).Normalized()));
+	setRotation(Quaternion(rotation * m_rotation).Normalized());
 }
 
 void Transform::scale(float factorX, float factorY, float factorZ)
@@ -139,7 +153,7 @@ void Transform::scale(const Vector3f& factor)
 	setScale(m_scale.x * factor.x, m_scale.y * factor.y, m_scale.z * factor.z);
 }
 
-const Matrix4f& Transform::getTransform() const
+void Transform::update() const
 {
 	// Recompute the combined transform if needed
 	if (m_transformNeedUpdate)
@@ -147,28 +161,18 @@ const Matrix4f& Transform::getTransform() const
 		Matrix4f translationMatrix;
 		Matrix4f scaleMatrix;
 
-		translationMatrix.InitTranslation(m_position);
+		translationMatrix.InitTranslation(m_position - m_origin);
 		scaleMatrix.InitScale(m_scale);
 
 		m_transform = translationMatrix * m_rotation.ToRotationMatrix() * scaleMatrix;
 
-
-		/*float angle = -m_rotation * 3.141592654f / 180.f;
-		float cosine = static_cast<float>(std::cos(angle));
-		float sine = static_cast<float>(std::sin(angle));
-		float sxc = m_scale.x * cosine;
-		float syc = m_scale.y * cosine;
-		float sxs = m_scale.x * sine;
-		float sys = m_scale.y * sine;
-		float tx = -m_origin.x * sxc - m_origin.y * sys + m_position.x;
-		float ty = m_origin.x * sxs - m_origin.y * syc + m_position.y;
-
-		m_transform = Matrix4f(sxc, sys, 0.f, tx,
-			-sxs, syc, 0.f, ty,
-			0.f, 0.f, 1.f, 0.f,
-			0.f, 0.f, 0.f, 1.f);*/
 		m_transformNeedUpdate = false;
 	}
+}
+
+const Matrix4f& Transform::getTransform() const
+{
+	update();
 
 	return m_transform;
 }

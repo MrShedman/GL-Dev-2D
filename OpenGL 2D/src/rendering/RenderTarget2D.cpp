@@ -121,3 +121,62 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 
 	Texture::bind(NULL);
 }
+
+void RenderTarget2D::drawInstanced(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d)
+{
+	RectI viewport = getViewport(camera);
+	int top = getSize().y - viewport.bottom;
+	glViewport(viewport.left, top, viewport.getWidth(), viewport.getHeight());
+
+	Shader2D::bind(states.shader);
+
+	//Enable vertex and texture coordinate arrays
+	states.shader->enableVertexPointer();
+	states.shader->enableTexCoordPointer();
+	states.shader->enableColourPointer();
+
+	//Set texture coordinate data
+	states.shader->setTexCoordPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
+	states.shader->setVertexPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+	states.shader->setColourPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+
+	if (d)
+	{
+		states.shader->setProjectionMatrix(camera.getTransform());
+	}
+	else
+	{
+		states.shader->setProjectionMatrix(states.cam->getProjection());
+	}
+
+	states.shader->setModelViewMatrix(states.transform);
+
+	if (states.texture != NULL)
+	{
+		Texture::bind(states.texture);
+		Texture::bind(&nullTexture, 1);
+	}
+	else
+	{
+		Texture::bind(&nullTexture);
+	}
+
+	//Update vertex buffer data
+	glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCount * sizeof(Vertex), vertices);
+
+	static const GLenum modes[] = { GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
+		GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN };
+
+	GLenum mode = modes[type];
+	//Draw using vertex data and index data
+	glDrawElements(mode, vertexCount, GL_UNSIGNED_INT, NULL);
+
+	//Disable vertex and texture coordinate arrays
+	states.shader->disableVertexPointer();
+	states.shader->disableTexCoordPointer();
+	states.shader->disableColourPointer();
+
+	Shader2D::bind(NULL);
+
+	Texture::bind(NULL);
+}
