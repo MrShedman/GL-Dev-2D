@@ -4,6 +4,8 @@
 #include "..\rendering\Transform.hpp"
 #include "Font.hpp"
 
+#include "..\gl\Buffer.hpp"
+
 class Text : public Drawable, public Transform
 {
 public:
@@ -19,7 +21,9 @@ public:
 		mAlignment(LEFT),
 		mBoundary(WORD),
 		mFontSize(14.0f),
-		mLineSpace(1.0f)
+		mLineSpace(1.0f),
+		m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+		m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
 	{
 
 	}
@@ -31,19 +35,12 @@ public:
 	mAlignment(LEFT),
 	mBoundary(WORD),
 	mFontSize(characterSize),
-	mLineSpace(1.0f)
+	mLineSpace(1.0f),
+	m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+	m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
 	{
 		setText(string);
 		setFont(font);
-	}
-
-	~Text()
-	{
-		if (mVBOID != 0)
-		{
-			glDeleteBuffers(1, &mVBOID);
-			glDeleteBuffers(1, &mIBOID);
-		}
 	}
 
 	/*void setFont(Font& font)
@@ -149,9 +146,6 @@ public:
 
 private:
 
-	GLuint mVBOID;
-	GLuint mIBOID;
-
 	std::vector<size_t>		mMust, mAllow;
 
 	bool		mInvalid;
@@ -169,7 +163,10 @@ private:
 
 	std::string m_text;
 
+	Buffer m_verticesBuffer;
+	Buffer m_indicesBuffer;
+
 	std::vector<Vertex> m_vertices;
-	std::vector<GLuint>	mIndices;
+	std::vector<GLuint>	m_indices;
 	const Font* m_font;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GLCheck.h"
+#include <assert.h>
 
 class Buffer
 {

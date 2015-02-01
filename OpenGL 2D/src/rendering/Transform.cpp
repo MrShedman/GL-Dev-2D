@@ -130,12 +130,9 @@ void Transform::rotate(const Vector3f& pivot, const Vector3f& axis, float angle)
 
 	Vector3f vector = m_position - pivot;
 
-	Quaternion rotation2 = (rotation * vector);
+	setPosition(pivot + vector.Rotate(rotation));
 
-	vector = Vector3f(rotation2.x, rotation2.y, rotation2.z);
-
-	setPosition(pivot + vector);
-	setRotation(rotation);
+	rotate(rotation);
 }
 
 void Transform::rotate(const Quaternion& rotation)

@@ -12,21 +12,22 @@ StateStack::StateStack(State::Context context)
 
 void StateStack::update(Time dt)
 {
-	for (auto &state : mStack)
+	/*for (auto &state : mStack)
 	{
 		if (!state->update(dt))
 		{
 			break;
 		}
 	}
+	*/
 
-	/*for (std::vector<State::Ptr>::reverse_iterator itr = mStack.rbegin(); itr != mStack.rend(); ++itr)
+	for (std::vector<State::Ptr>::reverse_iterator itr = mStack.rbegin(); itr != mStack.rend(); ++itr)
 	{
 		if (!(*itr)->update(dt))
 		{
 			break;
 		}
-	}*/
+	}
 		
 	applyPendingChanges();
 }

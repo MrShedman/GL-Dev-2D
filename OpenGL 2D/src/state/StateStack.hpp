@@ -64,7 +64,6 @@ class StateStack : private NonCopyable
 		std::map<States::ID, std::function<State::Ptr()>> mFactories;
 };
 
-
 template <typename T>
 void StateStack::registerState(States::ID stateID)
 {

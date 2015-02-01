@@ -6,12 +6,15 @@ void Text::draw(RenderTarget2D& target, RenderStates states) const
 {
 	if (m_font)
 	{
-		glBindBuffer(GL_ARRAY_BUFFER, mVBOID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBOID);
+		m_verticesBuffer.bind();
+		m_indicesBuffer.bind();
 
 		states.transform = states.transform * getTransform();
 		states.texture = m_font->getTexture();
 		target.draw(m_vertices.data(), m_vertices.size(), Triangles, states);
+
+		m_verticesBuffer.unbind();
+		m_indicesBuffer.unbind();
 	}
 }
 
@@ -51,7 +54,7 @@ void Text::renderMesh()
 	size_t sz = mText.length() / 2;
 	mVertices.reserve(4 * sz);
 	mTexcoords.reserve(4 * sz);
-	mIndices.reserve(6 * sz);
+	m_indices.reserve(6 * sz);
 
 	// process text in chunks
 	std::vector<size_t>::iterator	mitr = mMust.begin();
@@ -153,7 +156,7 @@ void Text::renderMesh()
 void Text::renderString(const std::string &str, Vector2i& cursor, float stretch)
 {
 	m_vertices.clear();
-	mIndices.clear();
+	m_indices.clear();
 
 	std::string::const_iterator itr;
 	for (itr = str.begin(); itr != str.end(); ++itr) {
@@ -179,12 +182,12 @@ void Text::renderString(const std::string &str, Vector2i& cursor, float stretch)
 				m_vertices.push_back(Vertex(cursor + Vector2f(pBounds.right, pBounds.top), Vector2f(tBounds.right, tBounds.top)));
 				m_vertices.push_back(Vertex(cursor + Vector2f(pBounds.right, pBounds.bottom), Vector2f(tBounds.right, tBounds.bottom)));
 
-				mIndices.push_back(index + 0); //mIndices.push_back(index + 3); mIndices.push_back(index + 1);
-				mIndices.push_back(index + 1); 
-				mIndices.push_back(index + 2);
-				mIndices.push_back(index + 3);
-				mIndices.push_back(index + 4);
-				mIndices.push_back(index + 5);
+				m_indices.push_back(index + 0); //m_indices.push_back(index + 3); m_indices.push_back(index + 1);
+				m_indices.push_back(index + 1); 
+				m_indices.push_back(index + 2);
+				m_indices.push_back(index + 3);
+				m_indices.push_back(index + 4);
+				m_indices.push_back(index + 5);
 			}
 			else
 			{
@@ -202,24 +205,8 @@ void Text::renderString(const std::string &str, Vector2i& cursor, float stretch)
 		}
 	}
 
-	if (mVBOID != 0)
-	{
-		glDeleteBuffers(1, &mVBOID);
-		glDeleteBuffers(1, &mIBOID);
-	}
-	//Create VBO
-	glGenBuffers(1, &mVBOID);
-	glBindBuffer(GL_ARRAY_BUFFER, mVBOID);
-	glBufferData(GL_ARRAY_BUFFER, m_vertices.size() * sizeof(Vertex), &m_vertices[0], GL_DYNAMIC_DRAW);
-
-	//Create IBO
-	glGenBuffers(1, &mIBOID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBOID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndices.size() * sizeof(GLuint), &mIndices[0], GL_DYNAMIC_DRAW);
-
-	//Unbind buffers
-	glBindBuffer(GL_ARRAY_BUFFER, NULL);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
+	m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
+	m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
 
 	mBoundsInvalid = true;
 	mInvalid = false;
@@ -241,6 +228,8 @@ bool Text::isWhitespaceUtf16(const char ch)
 
 	return std::binary_search(whitespace.begin(), whitespace.end(), ch);
 }
+#undef min
+#undef max
 
 RectF	Text::getBounds()
 {

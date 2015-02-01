@@ -12,21 +12,8 @@ Vector3f Vector3f::Rotate(const Quaternion& rotation) const
 	//// Extract the scalar part of the quaternion
 	float s = rotation.w;
 
-	//// Do the math
-	float temp1 = 2.0f * u.Dot(*this);
-	Vector3f temp2 = u * temp1;
-	
-	float temp3 = s*s - u.LengthSq();
-	Vector3f temp4 = *this * temp3;
-
-	float temp5 = 2.0f * s;
-	Vector3f temp6 = u.Cross(*this);
-
-	return temp2 + temp4 + temp6;
-
-	/*Quaternion w = rotation * (*this) * rotation.Conjugate();
-
-	return Vector3f(w.x, w.y, w.z);*/
+	Vector3f t = u.Cross(*this) * 2.0f;
+	return *this + t * s + u.Cross(t);
 }
 
 std::ostream& operator << (std::ostream& os, const Vector3f& v)

@@ -7,8 +7,8 @@
 GameState::GameState(StateStack& stack, Context context)
 	:
 	State(stack, context),
-	mFont(context.fonts->get(Fonts::Main)),
-	mText("Game", mFont),
+	//mFont(context.fonts->get(Fonts::Main)),
+	mText("Game", context.fonts->get(Fonts::Main)),
 	mBlocks()
 {
 	mBackgroundSprite.setTexture(context.textures->get(Textures::MenuBackground));
@@ -24,7 +24,7 @@ GameState::GameState(StateStack& stack, Context context)
 
 	Texture& t = context.textures->get(Textures::Texture1);
 
-	int size = 1;
+	int size = 6;
 	float scale = 10.f;
 
 	for (int i = -size; i < size; ++i)
@@ -36,10 +36,7 @@ GameState::GameState(StateStack& stack, Context context)
 				Block b;
 				b.create(1);
 				b.setPosition(i*scale, j*scale, k*scale);
-				//b.setOrigin(0.f, 0.f, 0.f);
-				//b.setScale(2, 4, 6);
-				//b.setRotation(Vector3f(1.0f, 1.0f, 0.0f), 45.0f);
-				b.setTexture(t);
+				//b.setTexture(t);
 				mBlocks.push_back(std::move(b));
 			}
 		}
@@ -71,8 +68,8 @@ void GameState::draw()
 	for (auto &b : mBlocks)
 	{
 		//b.move(Vector3f(0.1f, 0.1f, 0.1f));
-		//b.setScale(x, x, x);
-		b.rotate(b.getOrigin(), Vector3f(10.0f, 0.f, 0.f), m);
+		b.setScale(x, x, x);
+		b.rotate(b.getOrigin(), Vector3f(1.0f, 0.0f, 0.f), m);
 		
 		target.draw(b, states);
 	}
@@ -109,6 +106,7 @@ bool GameState::handleEvent(const Event& event)
 		// Escape pressed, trigger the pause screen
 		if (event.key.code == Keyboard::Escape)
 		{
+			requestStackPop();
 			requestStackPush(States::Menu);
 		}
 	}

@@ -2,63 +2,31 @@
 
 #include "RenderTarget2D.h"
 
-#include <memory>
-
-namespace
-{
-
-	std::shared_ptr<VBO> m_sharedVBO;
-
-	const std::shared_ptr<VBO>& initVBO()
-	{
-		if (!m_sharedVBO)
-		{
-			m_sharedVBO.reset(new VBO());
-		}
-
-		return m_sharedVBO;
-	}
-}
-
-
 Sprite::Sprite() :
 m_texture(NULL),
-m_textureRect()
+m_textureRect(),
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
 {
-	m_vbo = initVBO();
-//	mVBOID = 0;
-	//mIBOID = 0;
 }
 
 Sprite::Sprite(const Texture& texture) :
 m_texture(NULL),
-m_textureRect()
+m_textureRect(),
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
 {
-	//mVBOID = 0;
-	//mIBOID = 0;
 	setTexture(texture);
 }
 
 Sprite::Sprite(const Texture& texture, const RectI& rectangle) :
 m_texture(NULL),
-m_textureRect()
+m_textureRect(),
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
 {
-	//mVBOID = 0;
-	//mIBOID = 0;
 	setTexture(texture);
 	setTextureRect(rectangle);
-}
-
-Sprite::~Sprite()
-{
-	glBindBuffer(GL_ARRAY_BUFFER, NULL);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-
-//	if (mVBOID != 0)
-	//{
-	//	glDeleteBuffers(1, &mVBOID);
-	//	glDeleteBuffers(1, &mIBOID);
-	//}
 }
 
 void Sprite::setTexture(const Texture& texture, bool resetRect)
@@ -72,8 +40,14 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
 		setTextureRect(RectI(0, texture.getSize().y, 0, texture.getSize().x));
 	}
 
-	m_vbo = initVBO();
-	//generateVBO();
+	GLuint indices[4];
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+	indices[3] = 3;
+
+	m_verticesBuffer.data(4 * sizeof(Vertex), m_vertices);
+	m_indicesBuffer.data(4 * sizeof(GLuint), &indices);
 }
 
 void Sprite::setTextureRect(const RectI& rectangle)
@@ -123,59 +97,19 @@ RectF Sprite::getGlobalBounds() const
 	return getTransform().Transform(getLocalBounds());
 }
 
-void Sprite::generateVBO()
-{
-	/*Vertex vData[4];
-	GLuint iData[4];
-
-	//Set rendering indices
-	iData[0] = 0;
-	iData[1] = 1;
-	iData[2] = 2;
-	iData[3] = 3;
-
-	//Create VBO
-	glGenBuffers(1, &mVBOID);
-	glBindBuffer(GL_ARRAY_BUFFER, mVBOID);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(Vertex), vData, GL_STATIC_DRAW);
-
-	//Create IBO
-	glGenBuffers(1, &mIBOID);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIBOID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 4 * sizeof(GLuint), iData, GL_STATIC_DRAW);
-	
-	//Unbind buffers
-	glBindBuffer(GL_ARRAY_BUFFER, NULL);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);*/
-}
-
-void Sprite::bind(const Sprite* sprite)
-{
-	/*if (sprite)
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, sprite->mVBOID);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sprite->mIBOID);
-	}
-	else
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, NULL);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-	}*/
-}
-
-
 void Sprite::draw(RenderTarget2D& target, RenderStates states) const
 {
 	if (m_texture)
 	{
-	//	Sprite::bind(this);
-		m_vbo->bind();
-
+		m_verticesBuffer.bind();
+		m_indicesBuffer.bind();
+		
 		states.transform *= getTransform();
 		states.texture = m_texture;
 		target.draw(m_vertices, 4, TrianglesStrip, states);
 
-		//Sprite::bind(NULL);
+		m_verticesBuffer.unbind();
+		m_indicesBuffer.unbind();
 	}
 }
 

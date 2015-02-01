@@ -33,7 +33,7 @@ class GameState : public State
 		std::vector<Block>	mBlocks;
 
 		Sprite				mBackgroundSprite;
-		Font				mFont;
+		//Font				mFont;
 		Text				mText;
 
 		Clock clock;
