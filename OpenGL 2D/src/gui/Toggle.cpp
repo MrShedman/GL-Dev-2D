@@ -60,7 +60,7 @@ void Toggle::setState(bool flag)
 	isSelected ? changeState(Pressed) : changeState(Normal);
 }
 
-void Toggle::handleEvent(const Event& event)
+bool Toggle::handleEvent(const Event& event)
 {
 	if (event.type == Event::MouseMoved)
 	{
@@ -74,6 +74,8 @@ void Toggle::handleEvent(const Event& event)
 	{
 		mouseReleased();
 	}
+
+	return mouseOver();
 }
 
 void Toggle::update()
@@ -94,7 +96,7 @@ void Toggle::update()
 
 bool Toggle::mouseOver()
 {
-	return getTransform().Transform(mShape.getLocalBounds()).contains(Mouse::getPosition(window));
+	return getTransform().transform(mShape.getLocalBounds()).contains(Mouse::getPosition(window));
 }
 
 void Toggle::mouseMoved()

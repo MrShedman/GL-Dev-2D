@@ -244,7 +244,12 @@ bool Window::isDragDropAllowed() const
 
 void Window::clear(Color color)
 {
-	glClearColor(color.r / 255, color.g / 255, color.b / 255, color.a / 255);
+	float r = static_cast<float>(color.r) / 255.0f;
+	float g = static_cast<float>(color.g) / 255.0f;
+	float b = static_cast<float>(color.b) / 255.0f;
+	float a = static_cast<float>(color.a) / 255.0f;
+
+	glClearColor(r, g, b, a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 

@@ -94,7 +94,7 @@ RectF Sprite::getLocalBounds() const
 
 RectF Sprite::getGlobalBounds() const
 {
-	return getTransform().Transform(getLocalBounds());
+	return getTransform().transform(getLocalBounds());
 }
 
 void Sprite::draw(RenderTarget2D& target, RenderStates states) const

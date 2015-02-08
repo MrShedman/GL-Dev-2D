@@ -11,11 +11,14 @@
 #include "text\Font.hpp"
 #include "text\Text.hpp"
 
+#include "..\gui\Container.hpp"
 #include "..\gui\Button.hpp"
 #include "..\gui\Slider.h"
 
 #include "..\rendering\Block.hpp"
 #include "..\rendering\CameraPersp.hpp"
+
+#include "..\experiment\Graph.h"
 
 class GameState : public State
 {
@@ -28,13 +31,21 @@ class GameState : public State
 
 	private:
 
+		bool polygonMode;
+
+		void initializeButtons();
+
+		float speed;
+
+		std::vector<Graph> m_graphs;
+
 		CameraPersp cam;
 
 		std::vector<Block>	mBlocks;
 
 		Sprite				mBackgroundSprite;
-		//Font				mFont;
 		Text				mText;
 
 		Clock clock;
+		GUI::Container		mGUIContainer;
 };

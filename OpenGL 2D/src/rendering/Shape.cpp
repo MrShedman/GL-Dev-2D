@@ -127,7 +127,7 @@ RectF Shape::getLocalBounds() const
 
 RectF Shape::getGlobalBounds() const
 {
-	return getTransform().Transform(getLocalBounds());
+	return getTransform().transform(getLocalBounds());
 }
 
 Shape::Shape() :

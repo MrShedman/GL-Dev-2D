@@ -70,6 +70,9 @@
     <Filter Include="Header Files\GL">
       <UniqueIdentifier>{3773d285-2789-418a-8131-13e907b5b8af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\experiment">
+      <UniqueIdentifier>{67104e3a-23f8-4a4b-94c7-5b754bd21867}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -197,6 +200,18 @@
     </ClCompile>
     <ClCompile Include="src\math\Angle.cpp">
       <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\Plane.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\math\Frustum.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\experiment\Matrix33.cpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\experiment\Laminate.cpp">
+      <Filter>Header Files\experiment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -400,6 +415,30 @@
     </ClInclude>
     <ClInclude Include="src\math\Angle.hpp">
       <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Frustum.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Plane.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Composite.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Graph.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Laminate.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Material.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Matrix33.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Range.h">
+      <Filter>Header Files\experiment</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

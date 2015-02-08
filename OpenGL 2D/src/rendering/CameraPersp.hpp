@@ -86,7 +86,7 @@ public:
 
 		//Similarly, the translation is inverted because the world appears to move opposite
 		//to the camera's movement.
-		Matrix4f cameraTranslation = Matrix4f().InitTranslation(m_transform.getPosition() * -1);
+		Matrix4f cameraTranslation = Matrix4f().InitTranslation(m_transform.getPosition().inverted());
 
 		return m_projection * cameraRotation * cameraTranslation;
 	}

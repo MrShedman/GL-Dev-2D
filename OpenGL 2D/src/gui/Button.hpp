@@ -38,7 +38,7 @@ class Button : public Component
         void					setText(const std::string& text);
 		void					setSize(Vector2f size);
 
-        virtual void			handleEvent(const Event& event);
+		virtual bool			handleEvent(const Event& event);
 		virtual void			update();
 
     private:

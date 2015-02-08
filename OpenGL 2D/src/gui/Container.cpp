@@ -22,12 +22,17 @@ void Container::clear()
 	mChildren.clear();
 }
 
-void Container::handleEvent(const Event& event)
+bool Container::handleEvent(const Event& event)
 {
 	for (auto &child : mChildren)
 	{
-		child->handleEvent(event);
+		if (child->handleEvent(event))
+		{
+			return true;
+		}
 	}
+
+	return false;
 }
 
 void Container::update()

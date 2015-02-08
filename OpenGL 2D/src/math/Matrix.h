@@ -264,40 +264,55 @@ public:
 		return *this;
 	}
 
-	inline Vector4<T> Transform(const Vector4<T>& rhs) const
+	inline Vector3<T> Matrix4<T>::transformVector(const Vector3<T> &rhs) const
 	{
-		Vector4<T> result;
+		T x = rhs.x * m_matrix[0][0] + rhs.y * m_matrix[1][0] + rhs.z * m_matrix[2][0];
+		T y = rhs.x * m_matrix[0][1] + rhs.y * m_matrix[1][1] + rhs.z * m_matrix[2][1];
+		T z = rhs.x * m_matrix[0][2] + rhs.y * m_matrix[1][2] + rhs.z * m_matrix[2][2];
 
-		result.x = rhs.x * m_matrix[0][0] + rhs.y * m_matrix[1][0] + rhs.z * m_matrix[2][0] + rhs.w * m_matrix[3][0];
-		result.y = rhs.x * m_matrix[0][1] + rhs.y * m_matrix[1][1] + rhs.z * m_matrix[2][1] + rhs.w * m_matrix[3][1];
-		result.z = rhs.x * m_matrix[0][2] + rhs.y * m_matrix[1][2] + rhs.z * m_matrix[2][2] + rhs.w * m_matrix[3][2];
-		result.w = rhs.x * m_matrix[0][3] + rhs.y * m_matrix[1][3] + rhs.z * m_matrix[2][3] + rhs.w * m_matrix[3][3];
+		return Vector3<T>(x, y, z);
+	}
 
-		return result;
+	inline Vector4<T> transformPoint(const Vector4<T>& rhs) const
+	{
+		Vector3<T> v4 = transformPoint(Vector3f(rhs.x, rhs.y, rhs.z));
+		return Vector4<T>(v4.x, v4.y, v4.z, T(0));
 	}
 	
-	inline Vector3<T> Transform(const Vector3<T>& rhs) const
+	inline Vector3<T> transformPoint(const Vector3<T>& rhs) const
 	{
-		Vector4<T> v4 = Transform(Vector4<T>(rhs.x, rhs.y, rhs.z, T(1)));
+		T x = rhs.x * m_matrix[0][0] + rhs.y * m_matrix[1][0] + rhs.z * m_matrix[2][0] + m_matrix[3][0];
+		T y = rhs.x * m_matrix[0][1] + rhs.y * m_matrix[1][1] + rhs.z * m_matrix[2][1] + m_matrix[3][1];
+		T z = rhs.x * m_matrix[0][2] + rhs.y * m_matrix[1][2] + rhs.z * m_matrix[2][2] + m_matrix[3][2];
+		T w = rhs.x * m_matrix[0][3] + rhs.y * m_matrix[1][3] + rhs.z * m_matrix[2][3] + m_matrix[3][3];
 
-		return Vector3<T>(v4.x, v4.y, v4.z);
+		return Vector3<T>(x / w, y / w, z / w);
 	}
 
-	inline Vector2<T> Transform(const Vector2<T>& rhs) const
+	inline Vector3<T> transformPointAffine(const Vector3<T>& rhs) const
 	{
-		Vector4<T> v4 = Transform(Vector4<T>(rhs.x, rhs.y, T(1), T(1)));
+		T x = rhs.x * m_matrix[0][0] + rhs.y * m_matrix[1][0] + rhs.z * m_matrix[2][0] + m_matrix[3][0];
+		T y = rhs.x * m_matrix[0][1] + rhs.y * m_matrix[1][1] + rhs.z * m_matrix[2][1] + m_matrix[3][1];
+		T z = rhs.x * m_matrix[0][2] + rhs.y * m_matrix[1][2] + rhs.z * m_matrix[2][2] + m_matrix[3][2];
 
-		return Vector2<T>(v4.x, v4.y);
+		return Vector3<T>(x, y, z);
 	}
 
-	inline Rect<T> Transform(const Rect<T>& rhs) const
+	inline Vector2<T> transformPoint(const Vector2<T>& rhs) const
+	{
+		Vector3<T> v3 = transformPoint(Vector3<T>(rhs.x, rhs.y, T(0)));
+
+		return Vector2<T>(v3.x, v3.y);
+	}
+
+	inline Rect<T> transform(const Rect<T>& rhs) const
 	{
 		const std::vector<Vector2<T>> points =
 		{
-			Transform(Vector2<T>(rhs.left, rhs.top)),
-			Transform(Vector2<T>(rhs.left, rhs.bottom)),
-			Transform(Vector2<T>(rhs.right, rhs.top)),
-			Transform(Vector2<T>(rhs.right, rhs.bottom))
+			transformPoint(Vector2<T>(rhs.left, rhs.top)),
+			transformPoint(Vector2<T>(rhs.left, rhs.bottom)),
+			transformPoint(Vector2<T>(rhs.right, rhs.top)),
+			transformPoint(Vector2<T>(rhs.right, rhs.bottom))
 		};
 
 		return RectF(points);

@@ -23,7 +23,6 @@ namespace
 			return false;
 		}
 
-		std::cout << glGetError();
 		return true;
 	}
 

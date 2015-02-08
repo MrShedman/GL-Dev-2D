@@ -128,9 +128,9 @@ void Transform::rotate(const Vector3f& pivot, const Vector3f& axis, float angle)
 {
 	Quaternion rotation = Quaternion(axis, angle).Normalized();
 
-	Vector3f vector = m_position - pivot;
+	Vector3f vector = m_position - m_origin - pivot;
 
-	setPosition(pivot + vector.Rotate(rotation));
+	setPosition(pivot + vector.Rotate(rotation) + m_origin);
 
 	rotate(rotation);
 }

@@ -5,6 +5,8 @@
 
 #include "..\math\Vector.h"
 
+#include "Color.h"
+
 class Image
 {
 public:
@@ -13,6 +15,8 @@ public:
 
 	const unsigned char* Image::getData() const;
 	Vector2i getSize() const;
+
+	Color getPixel(unsigned int x, unsigned int y) const;
 
 private:
 

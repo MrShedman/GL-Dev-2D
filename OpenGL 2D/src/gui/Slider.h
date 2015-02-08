@@ -46,7 +46,7 @@ public:
 	void					setCurrentValue(T value);
 	void					setPossibleValues(std::vector<T> values);
 
-	virtual void			handleEvent(const Event& event);
+	virtual bool			handleEvent(const Event& event);
 	virtual void			update();
 
 private:

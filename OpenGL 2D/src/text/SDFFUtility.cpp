@@ -56,7 +56,7 @@ bool loadSDFF(const std::string& filename, MetricsData& metrics, std::vector<uns
 	pixels.resize(imageSize);
 
 
-	for (unsigned int i = 0; i < imageSize; i += 4)
+	for (int i = 0; i < imageSize; i += 4)
 	{
 		unsigned char temp = in.read<unsigned char>();
 

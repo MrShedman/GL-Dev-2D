@@ -8,12 +8,6 @@
 #include <memory>
 #include <map>
 
-namespace
-{
-	//std::map<Textures::ID, std::string> texureRefs;
-	//texureRefs[Textures::MenuBackground] = "res/textures/MenuBackground.png";
-}
-
 bool LoadingState::loadParallel(Context context)
 {
 	Image i1;
@@ -72,10 +66,10 @@ percent(0)
 
 	//Util::scaleSpriteToFitWindow(mBackgroundSprite, *context.window);
 
-	mBackgroundSprite.setScale(1.f, 1.f);
+	mBackgroundSprite.setScale(1.0f, 1.0f);
 	auto size = mBackgroundSprite.getTexture()->getSize();
-	mBackgroundSprite.setOrigin(size.x / 2, size.y / 2);
-	mBackgroundSprite.setPosition(640, 360);
+	mBackgroundSprite.setOrigin(static_cast<float>(size.x) / 2.0f, static_cast<float>(size.y) / 2.0f);
+	mBackgroundSprite.setPosition(640.0f, 360.0f);
 	initializeButtons();
 }
 

@@ -27,8 +27,8 @@ void RenderTarget2D::create(Camera& cam, unsigned int width, unsigned int height
 
 RectI RenderTarget2D::getViewport(const Camera& view) const
 {
-	float width = m_size.x;
-	float height = m_size.y;
+	float width = static_cast<float>(m_size.x);
+	float height = static_cast<float>(m_size.y);
 	const RectF& viewport = view.getViewport();
 
 	int top = static_cast<int>(0.5f + height * viewport.top);
@@ -53,7 +53,7 @@ Vector2f RenderTarget2D::mapPixelToCoords(const Vector2i& point, const Camera& v
 	normalized.y = 1.f - 2.f * (point.y - viewport.top) / viewport.getHeight();
 
 	// Then transform by the inverse of the view matrix
-	return view.getInverseTransform().Transform(normalized);
+	return view.getInverseTransform().transformPoint(normalized);
 }
 
 void RenderTarget2D::draw(const Drawable& drawable, const RenderStates& states)

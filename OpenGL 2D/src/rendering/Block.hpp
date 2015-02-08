@@ -141,9 +141,9 @@ public:
 
 		if (count == 6)
 		{
-			float r = randomize(0, 255);
-			float g = randomize(0, 255);
-			float b = randomize(0, 255);
+			unsigned char r = static_cast<unsigned char>(randomize(0, 255));
+			unsigned char g = static_cast<unsigned char>(randomize(0, 255));
+			unsigned char b = static_cast<unsigned char>(randomize(0, 255));
 			c = Color(r, g, b);
 			count = 0;
 		}

@@ -130,7 +130,7 @@ namespace GUI
 	}
 
 	template<class T>
-	void Slider<T>::handleEvent(const Event& event)
+	bool Slider<T>::handleEvent(const Event& event)
 	{
 		if (event.type == Event::MouseMoved)
 		{
@@ -144,12 +144,14 @@ namespace GUI
 		{
 			mouseReleased();
 		}
+
+		return mouseOver(mShape.getGlobalBounds());
 	}
 
 	template<class T>
 	bool Slider<T>::mouseOver(RectF rect)
 	{
-		return getTransform().Transform(rect).contains(Mouse::getPosition(window));
+		return getTransform().transform(rect).contains(Mouse::getPosition(window));
 	}
 
 	template<class T>

@@ -47,7 +47,7 @@ void Button::setSize(Vector2f size)
 	mText.setPosition(bounds.getCenter());
 }
 
-void Button::handleEvent(const Event& event)
+bool Button::handleEvent(const Event& event)
 {
 	if (event.type == Event::MouseMoved)
 	{
@@ -61,6 +61,8 @@ void Button::handleEvent(const Event& event)
 	{
 		mouseReleased();
 	}
+
+	return mouseOver();
 }
 
 void Button::update()
@@ -82,7 +84,7 @@ void Button::update()
 
 bool Button::mouseOver()
 {
-	return getTransform().Transform(mShape.getLocalBounds()).contains(Mouse::getPosition(window));
+	return getTransform().transform(mShape.getLocalBounds()).contains(Mouse::getPosition(window));
 }
 
 void Button::mouseMoved()

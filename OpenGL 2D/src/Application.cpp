@@ -21,8 +21,6 @@ void scaleSpriteToFitWindow(Sprite &sprite, const Window &window)
 
 const Time Application::timePerFrame = seconds(1.f / 60.f);
 
-static float pt = 14.f;
-
 Application::Application(Window& window)
 :
 window(window),
@@ -116,7 +114,7 @@ void Application::update(Time dt)
 
 void Application::render()
 {
-	window.clear(Color::Black);//Color(35, 127, 229));
+	window.clear(Color::White);
 	
 	mStateStack.draw();
 	

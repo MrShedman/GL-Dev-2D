@@ -23,7 +23,7 @@ class Component : public Drawable, public Transform, private NonCopyable
 
         virtual bool		isActive() const;
 
-        virtual void		handleEvent(const Event& event) = 0;
+        virtual bool		handleEvent(const Event& event) = 0;
 		virtual void		update() = 0;
 
     private:

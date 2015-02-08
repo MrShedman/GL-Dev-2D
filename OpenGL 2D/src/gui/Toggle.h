@@ -37,7 +37,7 @@ namespace GUI
 		void					setText(const std::string& offText, const std::string& onText);
 		void					setSize(Vector2f size);
 		void					setState(bool flag);
-		virtual void			handleEvent(const Event& event);
+		virtual bool			handleEvent(const Event& event);
 		virtual void			update();
 
 	private:
