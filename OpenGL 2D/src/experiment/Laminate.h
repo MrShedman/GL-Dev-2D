@@ -116,7 +116,7 @@ private:
 
 		float rho = (y + Bm) / (y - 1.0f);
 
-		float nom = (1 + Bm)*Vf;
+		float nom = (1.0f + Bm)*Vf;
 
 		float den = rho - ((1.0f + ((3.0f  * (Bm * Bm)*(Vm *Vm)) / (alpha*(Vf * Vf * Vf) + 1.0f)))*Vf);
 
@@ -132,7 +132,7 @@ private:
 	{
 		float A11 = 0.0f;
 		float A12 = 0.0f;
-		float A16 = 00.0f;
+		float A16 = 0.0f;
 		float A22 = 0.0f;
 		float A26 = 0.0f;
 		float A66 = 0.0f;
@@ -161,9 +161,9 @@ private:
 		float Q22 = E2 / Z;
 		float Q66 = G12;
 
-		return Matrix33(Q11, Q12, 0.0,
-						Q12, Q22, 0.0,
-						0.0, 0.0, Q66);
+		return Matrix33(Q11, Q12, 0.0f,
+						Q12, Q22, 0.0f,
+						0.0f, 0.0f, Q66);
 	}
 
 	static Matrix33 getPsiMatrix(float angleDeg)

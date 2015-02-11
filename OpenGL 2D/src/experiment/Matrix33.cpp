@@ -169,9 +169,9 @@ std::ostream& operator << (std::ostream& os, const Matrix33& m)
 		std::cout << "[";
 		for (int j = 0; j < 2; ++j)
 		{
-			std::cout << std::left << std::setfill(' ') << std::setw(10) << m[i][j];
+			std::cout << std::left << std::setfill(' ') << std::setw(10) << m[j][i];
 		}
-		std::cout << m[i][2] << "]" << std::endl;
+		std::cout << m[2][i] << "]" << std::endl;
 	}
 
 	return os;

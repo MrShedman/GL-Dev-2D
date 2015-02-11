@@ -136,6 +136,8 @@
     <ClInclude Include="src\experiment\Material.h" />
     <ClInclude Include="src\experiment\Matrix33.h" />
     <ClInclude Include="src\experiment\Range.h" />
+    <ClInclude Include="src\experiment\RobotArm.h" />
+    <ClInclude Include="src\experiment\RobotPlanar.h" />
     <ClInclude Include="src\gl\Buffer.hpp" />
     <ClInclude Include="src\gl\GLCheck.h" />
     <ClInclude Include="src\gui\Button.hpp" />

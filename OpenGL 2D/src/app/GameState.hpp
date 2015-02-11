@@ -19,6 +19,7 @@
 #include "..\rendering\CameraPersp.hpp"
 
 #include "..\experiment\Graph.h"
+#include "..\experiment\RobotPlanar.h"
 
 class GameState : public State
 {
@@ -36,6 +37,8 @@ class GameState : public State
 		void initializeButtons();
 
 		float speed;
+
+		RobotPlanar m_robot;
 
 		std::vector<Graph> m_graphs;
 

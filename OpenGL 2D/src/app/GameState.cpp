@@ -7,39 +7,12 @@
 #include "..\experiment\Material.h"
 #include "..\experiment\Composite.h"
 #include "..\experiment\Laminate.h"
+#include "..\experiment\RobotArm.h"
 
 namespace
 {
 	const double pi = 4 * std::atan(1.0);
 }
-//graph([](double x, double z)
-//{
-//	return std::cos(std::abs(x) + std::abs(z));
-//	//return x * z * std::exp(-(x*x) - (z * z));
-//	double R = std::sqrt(x * x + z*z) + DBL_EPSILON;
-//	return std::sin(R) / R;
-//},
-//Range(-4, 0.1, 4), Range(-4, 0.1, 4)
-//)
-////graph([](double x, double z)
-////{			
-////	return 1.0 - std::cosh(2 * x*z) / std::cosh(x);
-////},
-////Range(-0.5, 0.1, 0.5), Range(0, 0.1, 1)
-////)
-////graph([](int x, int z)
-////{			
-////Material fibre(76, 0.22);
-////
-////Material matrix(2.4, 0.34);
-////
-////Composite composite(fibre, matrix, double(x) / 100.0);
-////
-////Laminate::Properties prop = Laminate::getProperties(composite, 0.13, { 0, double(z) });
-////
-////return prop.vxy;
-////}, 100, 90
-////)
 
 
 GameState::GameState(StateStack& stack, Context context)
@@ -62,6 +35,7 @@ polygonMode(false)
 
 	cam.init(context.window);
 
+	/*
 	Graph graph1;
 
 	graph1.setEquation([](float x, float z)
@@ -124,6 +98,7 @@ polygonMode(false)
 		g.setSize(Vector3f(100.0f, 50.0f, 100.0f));
 		g.plot();
 	}
+	*/
 
 	initializeButtons();
 }
@@ -150,7 +125,9 @@ void GameState::draw()
 
 	states.cam = &cam;
 	
-	if (polygonMode)
+	target.draw(m_robot, states);
+
+	/*if (polygonMode)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
@@ -163,7 +140,7 @@ void GameState::draw()
 	if (polygonMode)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	}
+	}*/
 
 	//glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
@@ -181,10 +158,10 @@ bool GameState::update(Time dt)
 	mGUIContainer.update();
 	cam.Update(dt.asSeconds());
 
-	for (auto &g : m_graphs)
+	/*for (auto &g : m_graphs)
 	{
 		g.rotate(g.getOrigin(), Vector3f(0.0f, 1.0f, 0.f), m*speed*dt.asSeconds());
-	}
+	}*/
 
 	return true;
 }

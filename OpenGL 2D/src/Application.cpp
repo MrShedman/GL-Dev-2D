@@ -73,7 +73,7 @@ void Application::loadResources()
 	d.color = "LVertexColor";
 
 	mShaders.load(Shaders::Default, "res/shaders/program.vert", "res/shaders/program.frag", d);
-	mShaders.load(Shaders::Instanced, "res/shaders/instanced.vert", "res/shaders/postFX.frag", d);
+	//mShaders.load(Shaders::Instanced, "res/shaders/instanced.vert", "res/shaders/postFX.frag", d);
 	mShaders.load(Shaders::SDFF, "res/shaders/program.vert", "res/shaders/sdf.frag", d);
 }
 
