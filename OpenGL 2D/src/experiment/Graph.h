@@ -5,6 +5,7 @@
 #include <functional>
 
 #include "Range.h"
+#include "Cuboid.hpp"
 
 #include "..\rendering\Vertex.hpp"
 #include "..\rendering\Drawable.hpp"
@@ -31,9 +32,7 @@ public:
 	Graph()
 		:
 		m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
-		m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW),
-		m_verticesBuffer2(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
-		m_indicesBuffer2(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
+		m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
 	{
 		m_image.loadFromFile("res/textures/palette.png");
 		m_palette = Jet;
@@ -44,18 +43,15 @@ public:
 		Transform(std::move(other)),
 		m_verticesBuffer(std::move(other.m_verticesBuffer)),
 		m_indicesBuffer(std::move(other.m_indicesBuffer)),
-		m_verticesBuffer2(std::move(other.m_verticesBuffer2)),
-		m_indicesBuffer2(std::move(other.m_indicesBuffer2)),
 		m_vertices(std::move(other.m_vertices)),
 		m_indices(std::move(other.m_indices)),
-		m_vertices2(std::move(other.m_vertices2)),
-		m_indices2(std::move(other.m_indices2)),
 		m_equation(std::move(other.m_equation)),
 		m_image(std::move(other.m_image)),
 		m_xRange(std::move(other.m_xRange)),
 		m_yRange(std::move(other.m_yRange)),
 		m_palette(std::move(other.m_palette)),
-		m_size(std::move(other.m_size))
+		m_size(std::move(other.m_size)),
+		m_cuboid(std::move(other.m_cuboid))
 	{
 
 	}
@@ -68,16 +64,13 @@ public:
 			m_indicesBuffer = std::move(other.m_indicesBuffer);
 			m_vertices = std::move(other.m_vertices);
 			m_indices = std::move(other.m_indices);
-			m_verticesBuffer2 = std::move(other.m_verticesBuffer2);
-			m_indicesBuffer2 = std::move(other.m_indicesBuffer2);
-			m_vertices2 = std::move(other.m_vertices2);
-			m_indices2 = std::move(other.m_indices2);
 			m_equation = std::move(other.m_equation);
 			m_image = std::move(other.m_image);
 			m_xRange = std::move(other.m_xRange);
 			m_yRange = std::move(other.m_yRange);
 			m_palette = std::move(other.m_palette);
 			m_size = std::move(other.m_size);
+			m_cuboid = std::move(other.m_cuboid);
 		}
 
 		return *this;
@@ -94,6 +87,8 @@ public:
 		m_size = size;
 
 		setOrigin(m_size * 0.5f);
+
+		m_cuboid = std::move(Cuboid(size));
 	}
 
 	void setRange(Range xRange, Range yRange)
@@ -169,8 +164,6 @@ public:
 		m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
 		m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
 
-		doGrid();
-
 		return true;
 	}
 
@@ -186,73 +179,11 @@ public:
 		m_verticesBuffer.unbind();
 		m_indicesBuffer.unbind();
 
-		m_verticesBuffer2.bind();
-		m_indicesBuffer2.bind();
-
-		target.draw(&m_vertices2[0], m_vertices2.size(), Lines, states, false);
-
-		m_verticesBuffer2.unbind();
-		m_indicesBuffer2.unbind();
+		target.draw(m_cuboid, states);
 	}
 
 private:
-
-	void doGrid()
-	{
-		float x = m_size.x;
-		float y = m_size.y;
-		float z = m_size.z;
-
-		Vector3f p1 = Vector3f(0, 0, 0);
-		Vector3f p2 = Vector3f(0, y, 0);
-		Vector3f p3 = Vector3f(x, y, 0);
-		Vector3f p4 = Vector3f(x, 0, 0);
-		Vector3f p5 = Vector3f(0, 0, z);
-		Vector3f p6 = Vector3f(0, y, z);
-		Vector3f p7 = Vector3f(x, y, z);
-		Vector3f p8 = Vector3f(x, 0, z);
-
-		m_vertices2.push_back(p1);
-		m_vertices2.push_back(p2);
-		m_vertices2.push_back(p2);
-		m_vertices2.push_back(p3);
-		m_vertices2.push_back(p3);
-		m_vertices2.push_back(p4);
-		m_vertices2.push_back(p4);
-		m_vertices2.push_back(p1);
-
-		m_vertices2.push_back(p5);
-		m_vertices2.push_back(p6);
-		m_vertices2.push_back(p6);
-		m_vertices2.push_back(p7);
-		m_vertices2.push_back(p7);
-		m_vertices2.push_back(p8);
-		m_vertices2.push_back(p8);
-		m_vertices2.push_back(p5);
-
-		m_vertices2.push_back(p1);
-		m_vertices2.push_back(p5);
-
-		m_vertices2.push_back(p2);
-		m_vertices2.push_back(p6);
-
-		m_vertices2.push_back(p3);
-		m_vertices2.push_back(p7);
-
-		m_vertices2.push_back(p4);
-		m_vertices2.push_back(p8);
-
-		for (int i = 0; i < 24; ++i)
-		{
-			m_vertices2[i].color = Color(150, 150, 150);
-			m_indices2.push_back(i);
-		}
-
-		m_verticesBuffer2.data(m_vertices2.size() * sizeof(Vertex), m_vertices2.data());
-		m_indicesBuffer2.data(m_indices2.size() * sizeof(GLuint), m_indices2.data());
-
-	}
-
+	
 	void normalize()
 	{
 		auto xResult = std::minmax_element(m_vertices.begin(), m_vertices.end(), [&](Vertex v1, Vertex v2)->bool { return v1.position.x < v2.position.x; });
@@ -295,11 +226,7 @@ private:
 		return rightMin + (valueScaled * rightSpan);
 	}
 
-	Buffer m_verticesBuffer2;
-	Buffer m_indicesBuffer2;
-
-	std::vector<GLuint> m_indices2;
-	std::vector<Vertex> m_vertices2;
+	Cuboid m_cuboid;
 
 	Image m_image;
 	Palette m_palette;

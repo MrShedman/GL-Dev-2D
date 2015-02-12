@@ -23,7 +23,9 @@ speed(1.0f),
 mText("test@;#£$%", context.fonts->get(Fonts::Main)),
 mBlocks(),
 m_graphs(),
-polygonMode(false)
+polygonMode(false),
+m_mesh("Stand.stl", Color::Blue),
+m_mesh1("Stand2.stl", Color::Cyan)
 {
 	mBackgroundSprite.setTexture(context.textures->get(Textures::MenuBackground));
 
@@ -35,6 +37,10 @@ polygonMode(false)
 
 	cam.init(context.window);
 
+	Block b;
+	b.create(300);
+	b.setPosition(0, -300, 0);
+	mBlocks.push_back(std::move(b));
 	/*
 	Graph graph1;
 
@@ -126,7 +132,13 @@ void GameState::draw()
 	states.cam = &cam;
 	
 	target.draw(m_robot, states);
+	target.draw(m_mesh, states);
+	target.draw(m_mesh1, states);
 
+	for (auto &b : mBlocks)
+	{
+		target.draw(b, states);
+	}
 	/*if (polygonMode)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -157,6 +169,8 @@ bool GameState::update(Time dt)
 	Window& window = *getContext().window;
 	mGUIContainer.update();
 	cam.Update(dt.asSeconds());
+
+	m_robot.rotate(Vector3f(0.0f, 0.0f, 0.f), Vector3f(0.0f, 1.0f, 0.f), m*speed*dt.asSeconds());
 
 	/*for (auto &g : m_graphs)
 	{

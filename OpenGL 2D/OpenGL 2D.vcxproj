@@ -49,12 +49,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\lib\glew\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\lib\glew\include\;$(ProjectDir)\lib\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib\glew\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\Assimp\lib\x86;$(ProjectDir)\lib\glew\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <Profile>false</Profile>
     </Link>
   </ItemDefinitionGroup>
@@ -65,14 +65,14 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)\lib\glew\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\lib\glew\include\;$(ProjectDir)\lib\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(ProjectDir)\lib\glew\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\lib\Assimp\lib\x86;$(ProjectDir)\lib\glew\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -131,10 +131,12 @@
     <ClInclude Include="src\app\SettingsState.hpp" />
     <ClInclude Include="src\app\StateIdentifiers.hpp" />
     <ClInclude Include="src\experiment\Composite.h" />
+    <ClInclude Include="src\experiment\Cuboid.hpp" />
     <ClInclude Include="src\experiment\Graph.h" />
     <ClInclude Include="src\experiment\Laminate.h" />
     <ClInclude Include="src\experiment\Material.h" />
     <ClInclude Include="src\experiment\Matrix33.h" />
+    <ClInclude Include="src\experiment\Mesh.h" />
     <ClInclude Include="src\experiment\Range.h" />
     <ClInclude Include="src\experiment\RobotArm.h" />
     <ClInclude Include="src\experiment\RobotPlanar.h" />

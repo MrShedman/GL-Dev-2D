@@ -21,8 +21,8 @@ std::ostream& operator << (std::ostream& os, const Vector3f& v)
 	std::cout << std::fixed << std::setprecision(5);
 	std::cout << "(";
 
-	std::cout << std::left << std::setfill(' ') << std::setw(10) << v.x;
-	std::cout << std::left << std::setfill(' ') << std::setw(10) << v.y;
+	std::cout << std::left << std::setfill(' ') << std::setw(10) << v.x << ", ";
+	std::cout << std::left << std::setfill(' ') << std::setw(10) << v.y << ", ";
 	std::cout << std::left << std::setfill(' ') << std::setw(10) << v.z;
 
 	std::cout << ")" << std::endl;

@@ -2,6 +2,8 @@
 
 #include <ostream>
 
+#include "..\math\Vector.h"
+
 class Matrix33
 {
 public:
@@ -21,6 +23,32 @@ public:
 	Matrix33 getInverse() const;
 
 	Matrix33 operator*(const Matrix33& r) const;
+
+	Vector3f getPosition() const
+	{
+		float x = m[0][0] * m[2][0] + m[0][1] * m[2][1] + m[0][2] * m[2][2];
+		float y = m[1][0] * m[2][0] + m[1][1] * m[2][1] + m[1][2] * m[2][2];	
+
+		return Vector3f(x, y, 0.f);
+	}
+
+	Vector3f transformPointAffine(const Vector3f& rhs) const
+	{
+		float x = rhs.x * m[0][0] + rhs.y * m[1][0] + rhs.z * m[2][0];
+		float y = rhs.x * m[0][1] + rhs.y * m[1][1] + rhs.z * m[2][1];
+		float z = rhs.x * m[0][2] + rhs.y * m[1][2] + rhs.z * m[2][2];
+
+		return Vector3f(x, y, z);
+	}
+
+	inline Vector3f transformVector(const Vector3f &rhs) const
+	{
+		float x = rhs.x * m[0][0] + rhs.y * m[1][0] + rhs.z * m[2][0];
+		float y = rhs.x * m[0][1] + rhs.y * m[1][1] + rhs.z * m[2][1];
+		float z = rhs.x * m[0][2] + rhs.y * m[1][2] + rhs.z * m[2][2];
+
+		return Vector3f(x, y, z);
+	}
 
 	void set(unsigned int x, unsigned int y, float val);
 

@@ -20,6 +20,7 @@
 
 #include "..\experiment\Graph.h"
 #include "..\experiment\RobotPlanar.h"
+#include "..\experiment\Mesh.h"
 
 class GameState : public State
 {
@@ -37,6 +38,9 @@ class GameState : public State
 		void initializeButtons();
 
 		float speed;
+
+		Mesh m_mesh;
+		Mesh m_mesh1;
 
 		RobotPlanar m_robot;
 
