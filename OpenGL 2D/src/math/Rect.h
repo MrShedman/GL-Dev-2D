@@ -65,6 +65,69 @@ public:
 		right += dx;
 	}
 
+	bool lineIntersects(const Vector2<T>& begin, const Vector2<T>& end)
+	{
+		bool contB = contains(begin);
+		bool contE = contains(end);
+
+		if (contB != contE)
+		{
+			return true;
+		}
+		else if (contB && contE)
+		{
+			return false;
+		}
+
+		Vector2<T> topLeft(left, top);
+		Vector2<T> topRight(right, top);
+		Vector2<T> bottomLeft(left, bottom);
+		Vector2<T> bottomRight(right, bottom);
+
+		std::vector<std::pair<Vector2<T>, Vector2<T>>> lines;
+
+		lines.emplace_back(topLeft, topRight);
+		lines.emplace_back(topRight, bottomRight);
+		lines.emplace_back(bottomRight, bottomLeft);
+		lines.emplace_back(bottomLeft, topLeft);
+
+		for (size_t i = 0; i < 4; ++i)
+		{
+			Vector2<T> CmP = lines[i].first - begin;
+			Vector2<T> r = end - begin;
+			Vector2<T> s = lines[i].second - lines[i].first;
+
+			T CmPxr = CmP.Cross(r);
+			T CmPxs = CmP.Cross(s);
+			T rxs = r.Cross(s);
+
+			if (CmPxr == 0.f)
+			{
+				// Lines are collinear, and so intersect if they have any overlap
+
+				if (((lines[i].first.x - begin.x < 0) != (lines[i].first.x - end.x < 0))
+					|| ((lines[i].first.y - begin.y < 0) != (lines[i].first.y - end.y < 0)))
+				{
+						return true;
+				}
+			}
+
+			if (rxs == 0)
+				continue; // Lines are parallel.
+
+			T rxsr = 1 / rxs;
+			T t = CmPxs * rxsr;
+			T u = CmPxr * rxsr;
+
+			if ((t >= 0) && (t <= 1) && (u >= 0) && (u <= 1))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	bool contains(T x, T y)
 	{
 		return (x >= left && x <= right && y <= bottom && y >= top);

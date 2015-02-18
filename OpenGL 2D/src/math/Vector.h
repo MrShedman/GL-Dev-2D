@@ -263,6 +263,44 @@ public:
 		return std::sqrt(LengthSq());
 	}
 
+	inline T  DistanceSq(const Vector3<T>& to) const
+	{
+		return (to.x - x) * (to.x - x) + (to.y - y) * (to.y - y);
+	}
+
+	inline T  Distance(const Vector3<T>& to) const
+	{
+		return std::sqrt(DistanceSq(to));
+	}
+
+	inline T Distance(const Vector3<T>& segmentStart, const Vector3<T>& segmentEnd) const
+	{
+		const T l2 = segmentStart.DistanceSq(segmentEnd);
+		if (l2 == 0.0)
+		{
+			return Distance(segmentStart);   // v == w case
+		}
+
+		// Consider the line extending the segment, parameterized as v + t (w - v)
+		// We find projection of point p onto the line.
+		// It falls where t = [(p-v) . (w-v)] / |w-v|^2
+		const T t = ((*this - segmentStart).Dot(segmentEnd - segmentStart)) / l2;
+	
+		if (t < 0.0)
+		{
+			return Distance(segmentStart); // Beyond the 'v' end of the segment
+		}
+		else if (t > 1.0) 
+		{
+			return Distance(segmentEnd);   // Beyond the 'w' end of the segment
+		}
+
+		// Projection falls on the segment
+		Vector3<T> projection = segmentStart + (segmentEnd - segmentStart) * t;
+		return Distance(projection);
+	}
+
+
 	inline Vector3<T> Normalized() const
 	{
 		return *this / Length();

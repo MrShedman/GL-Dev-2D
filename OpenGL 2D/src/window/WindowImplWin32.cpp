@@ -298,19 +298,9 @@ void WindowImplWin32::setKeyRepeatEnabled(bool enabled)
 void WindowImplWin32::setRawMouseInput(bool flag)
 {
 	RAWINPUTDEVICE rawMouse = { 0x01, 0x02, 0, NULL };
-	if (m_usingRawInput)
+	if (m_usingRawInput == flag)
 	{
-		if (flag)
-		{
-			return; // Already enabled
-		}
-	}
-	else
-	{
-		if (!flag)
-		{
-			return; // Already disabled
-		}
+		return;
 	}
 
 	if (!flag)

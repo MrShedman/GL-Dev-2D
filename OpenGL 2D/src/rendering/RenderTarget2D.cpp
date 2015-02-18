@@ -63,7 +63,7 @@ void RenderTarget2D::draw(const Drawable& drawable, const RenderStates& states)
 
 #include "CameraPersp.hpp"
 
-void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d)
+void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d, bool n)
 {
 	RectI viewport = getViewport(camera);
 	int top = getSize().y - viewport.bottom;
@@ -73,11 +73,19 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 
 	//Enable vertex and texture coordinate arrays
 	states.shader->enableVertexPointer();
+	if (n)
+	{
+		states.shader->enableNormalPointer();
+	}
 	states.shader->enableTexCoordPointer();
 	states.shader->enableColourPointer();
 
 	//Set texture coordinate data
 	states.shader->setTexCoordPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
+	if (n)
+	{
+		states.shader->setNormalPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, normals));
+	}
 	states.shader->setVertexPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
 	states.shader->setColourPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
 
@@ -114,6 +122,10 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 	
 	//Disable vertex and texture coordinate arrays
 	states.shader->disableVertexPointer();
+	if (n)
+	{
+		states.shader->disableNormalPointer();
+	}
 	states.shader->disableTexCoordPointer();
 	states.shader->disableColourPointer();
 

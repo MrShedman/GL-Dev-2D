@@ -80,6 +80,7 @@
     <ClCompile Include="src\app\GameState.cpp" />
     <ClCompile Include="src\app\MenuState.cpp" />
     <ClCompile Include="src\app\SettingsState.cpp" />
+    <ClCompile Include="src\experiment\ConvexHull.cpp" />
     <ClCompile Include="src\experiment\Laminate.cpp" />
     <ClCompile Include="src\experiment\Matrix33.cpp" />
     <ClCompile Include="src\gui\Button.cpp" />
@@ -131,6 +132,7 @@
     <ClInclude Include="src\app\SettingsState.hpp" />
     <ClInclude Include="src\app\StateIdentifiers.hpp" />
     <ClInclude Include="src\experiment\Composite.h" />
+    <ClInclude Include="src\experiment\ConvexHull.hpp" />
     <ClInclude Include="src\experiment\Cuboid.hpp" />
     <ClInclude Include="src\experiment\Graph.h" />
     <ClInclude Include="src\experiment\Laminate.h" />
@@ -162,6 +164,7 @@
     <ClInclude Include="src\rendering\Color.h" />
     <ClInclude Include="src\rendering\Drawable.hpp" />
     <ClInclude Include="src\rendering\Image.hpp" />
+    <ClInclude Include="src\rendering\Light.hpp" />
     <ClInclude Include="src\rendering\PrimitiveType.hpp" />
     <ClInclude Include="src\rendering\RectangleShape.hpp" />
     <ClInclude Include="src\rendering\RenderStates.hpp" />

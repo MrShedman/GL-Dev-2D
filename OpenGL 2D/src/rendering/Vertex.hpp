@@ -23,9 +23,10 @@ public:
 
 	Vertex(const Vector3f& thePosition, const Vector2f& theTexCoords);
 
-	Vertex(const Vector3f& thePosition, const Color& theColor, const Vector2f& theTexCoords);
+	Vertex(const Vector3f& thePosition, const Color& theColor, const Vector2f& theTexCoords, const Vector3f& theNormals);
 
 	Vector3f position;
+	Vector3f normals;
 	Vector2f texCoords;
 	Color	 color;
 };

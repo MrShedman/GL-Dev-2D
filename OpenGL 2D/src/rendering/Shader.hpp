@@ -16,6 +16,7 @@ public:
 	struct Desc
 	{
 		std::string vertex;
+		std::string normal;
 		std::string texture;
 		std::string color;
 	};
@@ -33,6 +34,11 @@ public:
 	void setVertexPointer(GLsizei stride, const GLvoid* data) const
 	{
 		glVertexAttribPointer(m_positionLocation, 3, GL_FLOAT, GL_FALSE, stride, data);
+	}
+
+	void setNormalPointer(GLsizei stride, const GLvoid* data) const
+	{
+		glVertexAttribPointer(m_normalLocation, 3, GL_FLOAT, GL_TRUE, stride, data);
 	}
 
 	void setTexCoordPointer(GLsizei stride, const GLvoid* data) const
@@ -53,6 +59,16 @@ public:
 	void disableVertexPointer() const
 	{
 		glDisableVertexAttribArray(m_positionLocation);
+	}
+
+	void enableNormalPointer() const
+	{
+		glEnableVertexAttribArray(m_normalLocation);
+	}
+
+	void disableNormalPointer() const
+	{
+		glDisableVertexAttribArray(m_normalLocation);
 	}
 
 	void enableTexCoordPointer() const
@@ -123,9 +139,53 @@ public:
 		}
 	}
 
+	void setParameter(const std::string& name, float x, float y, float z)
+	{
+		if (m_programID)
+		{
+			// Enable program
+			Shader2D::bind(this);
+
+			// Get parameter location and assign it new values
+			GLint location = getParamLocation(name);
+			if (location != -1)
+			{
+				glUniform3f(location, x, y, z);
+			}
+
+			// Disable program
+			Shader2D::bind(NULL);
+		}
+	}
+
 	void setParameter(const std::string& name, const Vector2f& v)
 	{
 		setParameter(name, v.x, v.y);
+	}
+
+	void setParameter(const std::string& name, const Vector3f& v)
+	{
+		setParameter(name, v.x, v.y, v.z);
+	}
+
+	void setParameter(const std::string& name, const Matrix4f& m)
+	{
+		if (m_programID)
+		{
+			// Enable program
+			Shader2D::bind(this);
+
+			// Get parameter location and assign it new values
+			GLint location = getParamLocation(name);
+			if (location != -1)
+			{
+
+				glUniformMatrix4fv(m_projectionMatrixLocation, 1, GL_FALSE, m[0]);
+			}
+
+			// Disable program
+			Shader2D::bind(NULL);
+		}
 	}
 
 private:
@@ -138,6 +198,8 @@ private:
 		{
 			std::cout << "Parameter \"" << name << "\" not found in shader" << std::endl;
 		}
+
+		std::cout << "Paramete: " << name << " is in location: " << location << std::endl;
 
 		return location;
 	}
@@ -172,6 +234,7 @@ private:
 	ParamTable m_params;
 
 	GLint m_positionLocation;
+	GLint m_normalLocation;
 	GLint m_texCoordLocation;
 	GLint m_colourLocation;
 

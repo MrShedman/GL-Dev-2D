@@ -8,6 +8,8 @@
 #include "app\GameState.hpp"
 #include "app\SettingsState.hpp"
 
+#include "math\MathHelper.h"
+
 void scaleSpriteToFitWindow(Sprite &sprite, const Window &window)
 {
 	Vector2u tSize = sprite.getTexture()->getSize();
@@ -42,7 +44,7 @@ m_isOpen(true)
 	glEnable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
+	
 	Vector2i size = window.getSize();
 	glViewport(0, 0, size.x, size.y);
 	glClearColor(35 / 255.f, 127 / 255.f, 229 / 255.f, 255 / 255.f);
@@ -69,11 +71,12 @@ void Application::loadResources()
 
 	Shader2D::Desc d;
 	d.vertex = "LVertexPos";
+	d.normal = "LNormal";
 	d.texture = "LTexCoord";
 	d.color = "LVertexColor";
 
 	mShaders.load(Shaders::Default, "res/shaders/program.vert", "res/shaders/program.frag", d);
-	//mShaders.load(Shaders::Instanced, "res/shaders/instanced.vert", "res/shaders/postFX.frag", d);
+	mShaders.load(Shaders::Lighting, "res/shaders/lighting.vert", "res/shaders/lighting.frag", d);
 	mShaders.load(Shaders::SDFF, "res/shaders/program.vert", "res/shaders/sdf.frag", d);
 }
 
@@ -114,7 +117,7 @@ void Application::update(Time dt)
 
 void Application::render()
 {
-	window.clear(Color::White);
+	window.clear(Color::Black);
 	
 	mStateStack.draw();
 	

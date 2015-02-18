@@ -32,5 +32,5 @@ public:
 	const TextureHolder* textureHolder;
 
 	const Shader2D* shader;
-	const ShaderHolder* shaderHolder;
+	ShaderHolder* shaderHolder;
 };

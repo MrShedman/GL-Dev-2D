@@ -11,10 +11,10 @@ public:
 	void init(Window* w)
 	{
 		m_window = w;
-		m_projection.InitPerspective(ToRadians(70.0f), 1280.0f / 720.0f, 0.1f, 1000.0f);
+		m_projection.InitPerspective(ToRadians(70.0f), w->getAspect(), 0.1f, 1000.0f);
 	}
 
-	void handleEvent(const Event& event, float delta)
+	void handleEvent(const Event& event)
 	{
 		if (event.type == Event::MouseButtonPressed)
 		{
@@ -50,6 +50,10 @@ public:
 		{
 			mult = 3.0f;
 		}
+		if (Keyboard::isKeyPressed(Keyboard::LControl))
+		{
+			mult = 0.33f;
+		}
 		float m_speed = 12.0f;
 		float movAmt = m_speed * delta * mult;
 
@@ -78,6 +82,11 @@ public:
 	void Move(const Vector3f& direction, float amt)
 	{
 		m_transform.move(direction * amt);
+	}
+
+	Vector3f getPosition() const
+	{
+		return m_transform.getPosition();
 	}
 
 	Matrix4f getProjection() const

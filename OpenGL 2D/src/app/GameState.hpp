@@ -39,8 +39,7 @@ class GameState : public State
 
 		float speed;
 
-		Mesh m_mesh;
-		Mesh m_mesh1;
+		std::vector<Mesh> m_meshes;
 
 		RobotPlanar m_robot;
 

@@ -32,10 +32,11 @@ public:
 	Graph()
 		:
 		m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
-		m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
+		m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW),
+		m_palette(Jet),
+		m_showWireframe(false)
 	{
 		m_image.loadFromFile("res/textures/palette.png");
-		m_palette = Jet;
 	}
 
 	Graph(Graph&& other) :
@@ -44,6 +45,7 @@ public:
 		m_verticesBuffer(std::move(other.m_verticesBuffer)),
 		m_indicesBuffer(std::move(other.m_indicesBuffer)),
 		m_vertices(std::move(other.m_vertices)),
+		m_wireframe(std::move(other.m_wireframe)),
 		m_indices(std::move(other.m_indices)),
 		m_equation(std::move(other.m_equation)),
 		m_image(std::move(other.m_image)),
@@ -51,7 +53,8 @@ public:
 		m_yRange(std::move(other.m_yRange)),
 		m_palette(std::move(other.m_palette)),
 		m_size(std::move(other.m_size)),
-		m_cuboid(std::move(other.m_cuboid))
+		m_cuboid(std::move(other.m_cuboid)),
+		m_showWireframe(other.m_showWireframe)
 	{
 
 	}
@@ -63,6 +66,7 @@ public:
 			m_verticesBuffer = std::move(other.m_verticesBuffer);
 			m_indicesBuffer = std::move(other.m_indicesBuffer);
 			m_vertices = std::move(other.m_vertices);
+			m_wireframe = std::move(other.m_wireframe);
 			m_indices = std::move(other.m_indices);
 			m_equation = std::move(other.m_equation);
 			m_image = std::move(other.m_image);
@@ -71,11 +75,11 @@ public:
 			m_palette = std::move(other.m_palette);
 			m_size = std::move(other.m_size);
 			m_cuboid = std::move(other.m_cuboid);
+			m_showWireframe = other.m_showWireframe;
 		}
 
 		return *this;
 	}
-
 
 	void setEquation(Equation equation)
 	{
@@ -102,6 +106,11 @@ public:
 		m_palette = palette;
 	}
 
+	void showWireframe(bool flag)
+	{
+		m_showWireframe = flag;
+	}
+
 	bool plot()
 	{
 		int xLimit = m_xRange.getUpperLimit();
@@ -125,10 +134,13 @@ public:
 		}
 
 		int count = 0;
+		m_vertices.clear();
+		m_wireframe.clear();
+		m_indices.clear();
 
-		for (int x = 0; x <= xLimit - 1; ++x)
+		for (int x = 0; x < xLimit; ++x)
 		{
-			for (int y = 0; y <= yLimit - 1; ++y)
+			for (int y = 0; y < yLimit; ++y)
 			{
 				float xf = static_cast<float>(x);
 				float yf = static_cast<float>(y);
@@ -175,6 +187,13 @@ public:
 		states.transform *= getTransform();
 
 		target.draw(&m_vertices[0], m_vertices.size(), Triangles, states, false);
+		
+		if (m_showWireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			target.draw(&m_wireframe[0], m_wireframe.size(), Triangles, states, false);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
 
 		m_verticesBuffer.unbind();
 		m_indicesBuffer.unbind();
@@ -210,6 +229,8 @@ private:
 			float newZ = translate(v.position.z, zMin, zMax, 0.0, 1.0);
 			v.position.z = newZ  * m_size.z;
 
+			m_wireframe.emplace_back(v.position, Color::Black);
+
 			unsigned int pixel = static_cast<unsigned int>(std::round(newY * static_cast<float>(m_image.getSize().x - 1)));
 
 			v.color = m_image.getPixel(pixel, m_palette);
@@ -243,4 +264,7 @@ private:
 
 	std::vector<GLuint> m_indices;
 	std::vector<Vertex> m_vertices;
+
+	bool m_showWireframe;
+	std::vector<Vertex> m_wireframe;
 };

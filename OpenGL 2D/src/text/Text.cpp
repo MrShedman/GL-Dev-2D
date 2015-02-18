@@ -2,6 +2,67 @@
 
 #include "..\rendering\RenderTarget2D.h"
 
+Text::Text()
+:
+mInvalid(true),
+mBoundsInvalid(true),
+mAlignment(LEFT),
+mBoundary(WORD),
+mFontSize(14.0f),
+mLineSpace(1.0f),
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
+{
+
+}
+
+Text::Text(const std::string& string, const Font& font, unsigned int characterSize)
+:
+mInvalid(true),
+mBoundsInvalid(true),
+mAlignment(LEFT),
+mBoundary(WORD),
+mFontSize(characterSize),
+mLineSpace(1.0f),
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
+{
+	setText(string);
+	setFont(font);
+}
+
+void Text::setStringColor(const Color& color, const std::string& find)
+{
+	int occurrences = 0;
+	std::string::size_type start = 0;
+	while ((start = m_text.find(find, start)) != std::string::npos)
+	{
+		++occurrences;
+
+		for (size_t i = start; i < start + find.length(); ++i)
+		{
+			size_t index = (i - 0) * 6;
+
+			m_vertices[index + 0].color = color;
+			m_vertices[index + 1].color = color;
+			m_vertices[index + 2].color = color;
+			m_vertices[index + 3].color = color;
+			m_vertices[index + 4].color = color;
+			m_vertices[index + 5].color = color;
+		}
+
+		start += find.length(); // see the note
+	}
+}
+
+void Text::setColor(const Color& color)
+{
+	for (auto& v : m_vertices)
+	{
+		v.color = color;
+	}
+}
+
 void Text::draw(RenderTarget2D& target, RenderStates states) const
 {
 	if (m_font)
@@ -189,11 +250,7 @@ void Text::renderString(const std::string &str, Vector2i& cursor, float stretch)
 				m_indices.push_back(index + 4);
 				m_indices.push_back(index + 5);
 			}
-			else
-			{
-				std::cout << "whitespace" << std::endl;
-			}
-
+			
 			if (id == 32)
 				cursor.x += stretch * m_font->getAdvance(m, mFontSize);
 			else

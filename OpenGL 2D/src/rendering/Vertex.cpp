@@ -56,8 +56,9 @@ texCoords(theTexCoords)
 {
 }
 
-Vertex::Vertex(const Vector3f& thePosition, const Color& theColor, const Vector2f& theTexCoords) :
+Vertex::Vertex(const Vector3f& thePosition, const Color& theColor, const Vector2f& theTexCoords, const Vector3f& theNormals) :
 position(thePosition),
+normals(theNormals),
 color(theColor),
 texCoords(theTexCoords)
 {

@@ -32,7 +32,7 @@ namespace Shaders
 		Instanced,
 		PostFX,
 		SDFF,
-		D3
+		Lighting,
 	};
 }
 

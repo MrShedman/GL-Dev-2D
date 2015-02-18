@@ -24,12 +24,12 @@ public:
 
 	Matrix33 operator*(const Matrix33& r) const;
 
-	Vector3f getPosition() const
+	Vector2f getPosition() const
 	{
 		float x = m[0][0] * m[2][0] + m[0][1] * m[2][1] + m[0][2] * m[2][2];
 		float y = m[1][0] * m[2][0] + m[1][1] * m[2][1] + m[1][2] * m[2][2];	
 
-		return Vector3f(x, y, 0.f);
+		return Vector2f(x, y);
 	}
 
 	Vector3f transformPointAffine(const Vector3f& rhs) const

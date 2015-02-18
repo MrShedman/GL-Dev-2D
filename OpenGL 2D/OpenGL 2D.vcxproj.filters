@@ -99,9 +99,6 @@
     <ClCompile Include="src\window\Window.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
-    <ClCompile Include="src\window\WindowImplWin32.cpp">
-      <Filter>Source Files\Window</Filter>
-    </ClCompile>
     <ClCompile Include="src\math\Vector.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
@@ -212,6 +209,12 @@
     </ClCompile>
     <ClCompile Include="src\experiment\Laminate.cpp">
       <Filter>Header Files\experiment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\experiment\ConvexHull.cpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\window\WindowImplWin32.cpp">
+      <Filter>Source Files\Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -451,6 +454,12 @@
     </ClInclude>
     <ClInclude Include="src\experiment\Mesh.h">
       <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\ConvexHull.hpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\rendering\Light.hpp">
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
