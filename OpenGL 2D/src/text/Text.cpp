@@ -10,8 +10,9 @@ mAlignment(LEFT),
 mBoundary(WORD),
 mFontSize(14.0f),
 mLineSpace(1.0f),
-m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
-m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STREAM_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STREAM_DRAW),
+m_bufferNeedsUpdate(true)
 {
 
 }
@@ -24,8 +25,9 @@ mAlignment(LEFT),
 mBoundary(WORD),
 mFontSize(characterSize),
 mLineSpace(1.0f),
-m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
-m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STREAM_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STREAM_DRAW),
+m_bufferNeedsUpdate(true)
 {
 	setText(string);
 	setFont(font);
@@ -262,8 +264,15 @@ void Text::renderString(const std::string &str, Vector2i& cursor, float stretch)
 		}
 	}
 
-	m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
-	m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
+	//if (m_bufferNeedsUpdate)
+	{
+		//m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), NULL);
+		m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
+		//m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), NULL);
+		m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
+
+		m_bufferNeedsUpdate = false;
+	}
 
 	mBoundsInvalid = true;
 	mInvalid = false;

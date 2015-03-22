@@ -27,6 +27,11 @@ public:
 		return camera;
 	}
 
+	Camera& getCamera()
+	{
+		return camera;
+	}
+
 	Vector2u getSize() const;
 
 	RectI getViewport(const Camera& view) const;
@@ -35,9 +40,9 @@ public:
 
 	void draw(const Drawable& drawable, const RenderStates& states);
 
-	void draw(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d = true, bool n = false);
+	void draw(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool hasNormals = false, unsigned int offset = 0);
 
-	void drawInstanced(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d = true);
+	void drawDeferred(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states);
 
 private:
 

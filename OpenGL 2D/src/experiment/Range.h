@@ -5,7 +5,7 @@ class Range
 public:
 	Range()
 		:
-		Range(0.f, 0.f, 0.f)	
+		Range(0.f, 0.1f, 1.f)	
 	{}
 
 	Range(float begin, float increment, float end) 

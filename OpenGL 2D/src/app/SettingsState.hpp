@@ -5,6 +5,8 @@
 
 #include "..\rendering\Sprite.hpp"
 
+#include "..\experiment\Graph2D.h"
+
 class SettingsState : public State
 {
 	public:
@@ -16,12 +18,16 @@ class SettingsState : public State
 
 	private:
 
+		bool							mWindowFullscreen;
+		bool							mIsWindowResChanged;
 		bool							mIsWindowChanged;
 		bool							mIsChanged;
 
 		void initializeButtons();
 		void applyChanges();
 		
+		Graph2D					m_graph;
+
 		VideoMode				desiredMode;
 		std::vector<VideoMode>	validModes;
 

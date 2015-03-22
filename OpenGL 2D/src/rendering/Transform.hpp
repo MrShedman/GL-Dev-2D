@@ -2,6 +2,7 @@
 
 #include "..\math\Vector.h"
 #include "..\math\Matrix.h"
+#include "..\math\Angle.hpp"
 #include "..\math\Quaternion.h"
 
 class Transform
@@ -16,9 +17,9 @@ public:
 
 	void setPosition(const Vector3f& position);
 
-	void setRotation(float angle);
+	void setRotation(Angle angle);
 
-	void setRotation(const Vector3f& axis, float angle);
+	void setRotation(const Vector3f& axis, Angle angle);
 
 	void setRotation(const Quaternion& rotation);
 
@@ -32,7 +33,7 @@ public:
 
 	const Vector3f& getPosition() const;
 
-	float get2DRotation() const;
+	Angle get2DRotation() const;
 
 	const Quaternion& getRotation() const;
 
@@ -44,11 +45,11 @@ public:
 
 	void move(const Vector3f& offset);
 
-	void rotate(float angle);
+	void rotate(Angle angle);
 
-	void rotate(const Vector3f& axis, float angle);
+	void rotate(const Vector3f& axis, Angle angle);
 
-	void rotate(const Vector3f& pivot, const Vector3f& axis, float angle);
+	void rotate(const Vector3f& pivot, const Vector3f& axis, Angle angle);
 
 	void rotate(const Quaternion& rotation);
 
@@ -59,6 +60,8 @@ public:
 	const Matrix4f& getTransform() const;
 
 	const Matrix4f& getInverseTransform() const;
+
+	bool transformNeedsUpdate() const;
 
 private:
 

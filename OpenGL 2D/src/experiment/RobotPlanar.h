@@ -40,7 +40,7 @@ public:
 		m_cuboid.setOrigin(-30.0f, 0.0f, 0.0f);
 		m_cuboid.setPosition(Vector3f(120, 0, 0));
 
-		plot();
+		//plot();
 	}
 
 	void pushBack(RobotArm& arm)
@@ -89,7 +89,7 @@ public:
 		}
 
 		std::cout << "# points tested: " << count << std::endl;
-/*
+
 		auto yResult = std::max_element(m_vertices.begin(), m_vertices.end(), [&](Vertex v1, Vertex v2)->bool { return v1.position.y < v2.position.y; });
 
 		int height = std::ceil(yResult->position.y);
@@ -150,7 +150,7 @@ public:
 	
 		for (int theta = 0; theta < 360 / accuracyDeg; ++theta)
 		{
-			rotate(Vector3f(0, 0, 0), Vector3f(0.f, 1.f, 0.f), ToRadians(accuracyDeg));
+			rotate(Vector3f(0, 0, 0), Vector3f(0.f, 1.f, 0.f), degrees(accuracyDeg));
 
 			Matrix4f transform = getTransform();
 
@@ -182,7 +182,7 @@ public:
 				m_vertices.push_back(topRight);
 				m_vertices.push_back(topLeft);
 			}
-		}*/
+		}
 
 		size_t size = m_vertices.size();
 		std::cout << "# points accepted: " << size << std::endl;
@@ -196,7 +196,7 @@ public:
 			m_indices[i] = i;
 		}
 
-	//	calcNormals();
+		calcNormals();
 
 		m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
 		m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
@@ -244,11 +244,11 @@ public:
 
 		states.transform *= getTransform();
 		
-		target.draw(&m_vertices[0], m_vertices.size(), Points, states, false);
+		target.drawDeferred(&m_vertices[0], m_vertices.size(), Triangles, states);
 
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-		//target.draw(&m_verticesOutline[0], m_verticesOutline.size(), Triangles, states, false);
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		target.drawDeferred(&m_verticesOutline[0], m_verticesOutline.size(), Triangles, states);
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 		m_verticesBuffer.unbind();
 		m_indicesBuffer.unbind();

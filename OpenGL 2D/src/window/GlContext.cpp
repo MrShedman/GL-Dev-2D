@@ -111,6 +111,11 @@ void GlContext::display()
 	}
 }
 
+HGLRC GlContext::getGLContext() const
+{
+	return m_context;
+}
+
 const ContextSettings& GlContext::getSettings() const
 {
 	return m_settings;

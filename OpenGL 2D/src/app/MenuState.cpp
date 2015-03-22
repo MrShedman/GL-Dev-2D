@@ -26,7 +26,7 @@ void MenuState::initializeButtons()
 	float y = 0.5f * context.window->getSize().y;
 	float x = 0.5f * context.window->getSize().x;
 
-	auto playButton = std::make_shared<GUI::Button>(context);
+	auto playButton = GUI::Button::create(context);
 	playButton->setPosition(x - 120, y);
 	playButton->setText("Play");
 	playButton->setCallback([this]()
@@ -35,7 +35,7 @@ void MenuState::initializeButtons()
 		requestStackPush(States::Game);
 	});
 
-	auto settingsButton = std::make_shared<GUI::Button>(context);
+	auto settingsButton = GUI::Button::create(context);
 	settingsButton->setPosition(x - 120, y + 90);
 	settingsButton->setText("Settings");
 	settingsButton->setCallback([this]()
@@ -44,13 +44,14 @@ void MenuState::initializeButtons()
 		requestStackPush(States::Settings);
 	});
 
-	auto exitButton = std::make_shared<GUI::Button>(context);
+	auto exitButton = GUI::Button::create(context);
 	exitButton->setPosition(x - 120, y + 180);
 	exitButton->setText("Exit");
 	exitButton->setCallback([this]()
 	{
 		requestStateClear();
 	});
+	exitButton->setTheme(GUI::Theme(Color::rgb(34, 31, 255), Color::rgb(129, 212, 250), Color::rgb(244, 67, 54)));
 
 	mGUIContainer.pack(playButton);
 	mGUIContainer.pack(exitButton);
@@ -63,8 +64,9 @@ void MenuState::draw()
 
 	RenderStates states;
 	states.shaderHolder = getContext().shaders;
-
-	target.draw(mBackgroundSprite, RenderStates(&getContext().shaders->get(Shaders::Default)));
+	states.shader = &getContext().shaders->get(Shaders::Default);
+	states.cam = &target.getCamera();
+	target.draw(mBackgroundSprite, states);
 	target.draw(mGUIContainer, states);
 }
 

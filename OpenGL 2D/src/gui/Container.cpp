@@ -14,6 +14,7 @@ Container::Container()
 
 void Container::pack(Component::Ptr component)
 {
+	component->setParent(this);
 	mChildren.push_back(component);
 }
 

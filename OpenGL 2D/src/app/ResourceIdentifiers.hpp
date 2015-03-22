@@ -33,6 +33,8 @@ namespace Shaders
 		PostFX,
 		SDFF,
 		Lighting,
+		DeferredGeometry,
+		DeferredLighting
 	};
 }
 

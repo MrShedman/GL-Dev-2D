@@ -26,10 +26,10 @@ public:
 		T a10, T a11, T a12,
 		T a20, T a21, T a22)
 	{
-		m_matrix[0][0] = a00;	m_matrix[1][0] = a01;	m_matrix[2][0] = a02;	m_matrix[3][0] = a03;
-		m_matrix[0][1] = a10;	m_matrix[1][1] = a11;	m_matrix[2][1] = a12;	m_matrix[3][1] = a13;
-		m_matrix[0][2] = a20;	m_matrix[1][2] = a21;	m_matrix[2][2] = a22;	m_matrix[3][2] = a23;
-		m_matrix[0][3] = a30;	m_matrix[1][3] = a31;	m_matrix[2][3] = a32;	m_matrix[3][3] = a33;
+		m_matrix[0][0] = a00;	m_matrix[1][0] = a01;	m_matrix[2][0] = a02;	m_matrix[3][0] = T(0);
+		m_matrix[0][1] = a10;	m_matrix[1][1] = a11;	m_matrix[2][1] = a12;	m_matrix[3][1] = T(0);
+		m_matrix[0][2] = a20;	m_matrix[1][2] = a21;	m_matrix[2][2] = a22;	m_matrix[3][2] = T(0);
+		m_matrix[0][3] = T(0);	m_matrix[1][3] = T(0);	m_matrix[2][3] = T(0);	m_matrix[3][3] = T(1);
 	}
 
 	Matrix4<T>(T a00, T a01, T a02, T a03,
@@ -52,6 +52,18 @@ public:
 				m_matrix[i][j] = rhs.m_matrix[i][j];
 			}
 		}
+	}
+
+	Matrix4<T> operator = (const Matrix4<T>& rhs)
+	{
+		for (unsigned int i = 0; i < 4; i++)
+		{
+			for (unsigned int j = 0; j < 4; j++)
+			{
+				m_matrix[i][j] = rhs.m_matrix[i][j];
+			}
+		}
+		return *this;
 	}
 
 	inline Matrix4<T> InitIdentity()

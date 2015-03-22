@@ -3,7 +3,16 @@
 #include "..\math\Matrix.h"
 #include "..\math\Rect.h"
 #include <iostream>
-class Camera
+
+class CameraDerived
+{
+public:
+
+	virtual ~CameraDerived(){};
+	virtual Matrix4f getProjection() const = 0;
+};
+
+class Camera : public CameraDerived
 {
 public:
 
@@ -40,6 +49,8 @@ public:
 	void rotate(float angle);
 
 	void zoom(float factor);
+
+	Matrix4f getProjection() const;
 
 	const Matrix4f& getTransform() const;
 

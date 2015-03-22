@@ -53,10 +53,10 @@ percent(0)
 	outer.setSize(Vector2f(100 * 3, 50));
 	outer.setOutlineThickness(5.f);
 	//outer.setOutlineColor()
-	outer.generateVBO();
 
-	rectangle.setFillColor(Color(35, 127, 229));
-	rectangle.generateVBO();
+
+	rectangle.setFillColor(Color::rgb(35, 127, 229));
+
 
 	rectangle.setPosition(1280 / 2 - 150, 720 / 2 + 50);
 
@@ -84,10 +84,11 @@ void LoadingState::draw()
 
 	RenderStates states;
 	states.shaderHolder = getContext().shaders;
-
-	target.draw(mBackgroundSprite, RenderStates(&getContext().shaders->get(Shaders::Default)));
-	target.draw(outer, RenderStates(&getContext().shaders->get(Shaders::Default)));
-	target.draw(rectangle, RenderStates(&getContext().shaders->get(Shaders::Default)));
+	states.shader = &getContext().shaders->get(Shaders::Default);
+	states.cam = &target.getCamera();
+	target.draw(mBackgroundSprite, states);
+	target.draw(outer, states);
+	target.draw(rectangle, states);
 	target.draw(mGUIContainer, states);
 }
 

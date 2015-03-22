@@ -63,12 +63,26 @@ public:
 		m_wireframe.reserve(model->mNumVertices);
 
 		const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
+		 
+		bool hasNormals = model->HasNormals();
+		bool hasTexCoords = model->HasTextureCoords(0);
+
 		for (unsigned int i = 0; i < model->mNumVertices; i++)
 		{
 			const aiVector3D pos = model->mVertices[i];
-			m_vertices.emplace_back(Vector3f(pos.x, pos.y, pos.z), c);
+			const aiVector3D normal = hasNormals ? model->mNormals[i] : aiZeroVector;
+			const aiVector3D texCoord = hasTexCoords ? model->mTextureCoords[0][i] : aiZeroVector;
+		
+			m_vertices.emplace_back(Vector3f(pos.x, pos.y, pos.z), c, Vector2f(texCoord.x, texCoord.y), Vector3f(normal.x, normal.y, normal.z));
 			m_wireframe.emplace_back(Vector3f(pos.x, pos.y, pos.z), Color::Black);
+
 		}
+
+		if (!hasNormals)
+		{
+			calcNormals();
+		}
+
 		m_indices.reserve(model->mNumFaces*3);
 
 		for (unsigned int i = 0; i < model->mNumFaces; i++)
@@ -82,8 +96,6 @@ public:
 
 		setScale(0.1, 0.1, 0.1);
 		rotate(Vector3f(0, 1, 0), ToRadians(-90));
-
-		calcNormals();
 
 		m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
 		m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
@@ -156,13 +168,7 @@ public:
 
 		states.transform *= getTransform();
 
-		target.draw(&m_vertices[0], m_vertices.size(), Triangles, states, false, true);
-
-		/*glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-		target.draw(&m_wireframe[0], m_wireframe.size(), Triangles, states, false);
-
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);*/
+		target.drawDeferred(&m_vertices[0], m_vertices.size(), Triangles, states);
 
 		m_verticesBuffer.unbind();
 		m_indicesBuffer.unbind();

@@ -118,6 +118,11 @@ void Camera::zoom(float factor)
 	setSize(m_size.x * factor, m_size.y * factor);
 }
 
+Matrix4f Camera::getProjection() const
+{
+	return getTransform();
+}
+
 const Matrix4f& Camera::getTransform() const
 {
 	// Recompute the matrix if needed

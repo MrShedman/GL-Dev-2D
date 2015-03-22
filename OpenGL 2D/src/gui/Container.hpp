@@ -19,12 +19,13 @@ class Container : public Component
             
 
 	public:
+	
 		Container();
 
         void				pack(Component::Ptr component);
 		void				clear();
 
-        virtual bool		handleEvent(const Event& event);
+		virtual bool		handleEvent(const Event& event);
 		virtual void		update();
 
     private:

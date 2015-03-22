@@ -20,6 +20,8 @@ public:
 
 	void setVerticalSyncEnabled(bool enabled);
 
+	HGLRC getGLContext() const;
+
 	const ContextSettings& getSettings() const;
 
 private:

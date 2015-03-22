@@ -8,7 +8,8 @@
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
 #endif
 
-#if !defined( NDEBUG )
+//#if !defined( NDEBUG )
+#if defined ( DEBUG )
 #define check_gl_error( call ) call; gls::do_check_gl_error( __FILENAME__, __LINE__, #call )
 
 #if !defined( GLS_ERROR_STREAM )

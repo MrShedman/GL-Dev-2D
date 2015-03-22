@@ -47,7 +47,6 @@ m_isOpen(true)
 	
 	Vector2i size = window.getSize();
 	glViewport(0, 0, size.x, size.y);
-	glClearColor(35 / 255.f, 127 / 255.f, 229 / 255.f, 255 / 255.f);
 
 	Camera cam(RectF(0.f, static_cast<float>(size.y), 0.f, static_cast<float>(size.x)));
 
@@ -78,6 +77,8 @@ void Application::loadResources()
 	mShaders.load(Shaders::Default, "res/shaders/program.vert", "res/shaders/program.frag", d);
 	mShaders.load(Shaders::Lighting, "res/shaders/lighting.vert", "res/shaders/lighting.frag", d);
 	mShaders.load(Shaders::SDFF, "res/shaders/program.vert", "res/shaders/sdf.frag", d);
+	mShaders.load(Shaders::DeferredGeometry, "res/shaders/deferred.vert", "res/shaders/deferred.frag", d);
+	mShaders.load(Shaders::DeferredLighting, "res/shaders/deferredL.vert", "res/shaders/deferredL.frag", d);
 }
 
 void Application::getInput()

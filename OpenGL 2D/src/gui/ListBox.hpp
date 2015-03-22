@@ -1,12 +1,16 @@
 #pragma once
 
 #include "Component.hpp"
+#include "Button.hpp"
+#include "Slider.h"
+#include "Toggle.h"
 #include "..\app\ResourceIdentifiers.hpp"
 #include "..\state\State.hpp"
 #include "..\resource management\ResourceHolder.hpp"
 
 #include "..\rendering\RectangleShape.hpp"
 #include "..\text\Text.hpp"
+#include "..\window\Window.hpp"
 
 #include <vector>
 #include <string>
@@ -15,52 +19,46 @@
 
 namespace GUI
 {
-	class Toggle : public Component
+
+	class ListBox : public Component
 	{
 	public:
-		typedef std::shared_ptr<Toggle>		Ptr;
-		typedef std::function<void(bool)>	Callback;
-
-		enum Type
-		{
-			Normal,
-			Hover,
-			Pressed,
-			ButtonCount
-		};
-
+		typedef std::shared_ptr<ListBox>		Ptr;
+		typedef std::function<void(int)>		Callback;
 
 	public:
+
 		static Ptr				create(State::Context context);
 
 		void					setCallback(Callback callback);
-		void					setText(const std::string& offText, const std::string& onText);
+		void					setText(const std::string& text);
 		void					setSize(Vector2f size);
-		void					setState(bool flag);
+
 		virtual bool			handleEvent(const Event& event);
 		virtual void			update();
 
-		Vector2f				getSize() const;
+		void					addComponent(Component::Ptr component);
 
 	private:
 
-		Toggle(State::Context context);
+		ListBox(State::Context context);
 
 		bool mouseOver();
 		void mouseMoved();
 		void mousePressed();
 		void mouseReleased();
 
+		void updatePositions();
+
 		virtual void			draw(RenderTarget2D& target, RenderStates states) const;
-		void					changeState(Type buttonType);
-		void					updateText();
 
 	private:
-		bool isSelected;
+		bool isPressed;
 
-		std::string				offText;
-		std::string				onText;
-		Callback				mCallback;
+		Vector2f				m_size;
+
+		std::vector<Component::Ptr>	m_components;
+		Slider<float>::Ptr			m_slider;
 		RectangleShape			mShape;
 		Text					mText;
 		Window&					window;

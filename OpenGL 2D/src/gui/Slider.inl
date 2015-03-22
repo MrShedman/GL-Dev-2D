@@ -2,32 +2,37 @@
 namespace GUI
 {
 	template<class T>
-	Slider<T>::Slider(State::Context context)
+	Slider<T>::Slider(State::Context context, Orientation orientation)
 		: mCallback()
 		, mDisplayFunction()
-		, mShape(Vector2f(30, 70))
-		, mOutline(Vector2f(240, 70))
-		, mText("", context.fonts->get(Fonts::Main), 18)
+		, m_orientation(orientation)
+		, mShape(orientation == Horizontal ? Vector2f(30.0f, 70.0f) : Vector2f(70.0f, 30.0f))
+		, mOutline(orientation == Horizontal ? Vector2f(240.0f, 70.0f) : Vector2f(70.0f, 240.0f))
+		, mText("", context.fonts->get(Fonts::Main), 18.0f)
 		, window(*context.window)
 		, isPressed(false)
 	{
 		changeState(Normal);
 
-		mOutline.setFillColor(Color(150, 150, 150));
-		mOutline.setOutlineThickness(-5.f);
+		mOutline.setFillColor(Color::rgb(150, 150, 150));
+		mOutline.setOutlineThickness(-5.0f);
 		mOutline.setOutlineColor(Color::Black);
 
-		mShape.setOutlineThickness(-5.f);
+		mShape.setOutlineThickness(-5.0f);
 		mShape.setOutlineColor(Color::Black);
 
 		mText.setColor(Color::White);
 		RectF bounds = mOutline.getLocalBounds();
 		mText.setPosition(bounds.getCenter());
 
-		mShape.generateVBO();
-		mOutline.generateVBO();
-
 		updateRange();
+	}
+
+	template<class T>
+	typename Slider<T>::Ptr Slider<T>::create(State::Context context, Orientation orientation)
+	{
+		std::shared_ptr<Slider<T>> slider(new Slider<T>(context, orientation));
+		return slider;
 	}
 
 	template<class T>
@@ -62,7 +67,14 @@ namespace GUI
 
 				float position = (maxRange - minRange) * percent + minRange;
 
-				mShape.setPosition(position, mShape.getPosition().y);
+				if (m_orientation == Horizontal)
+				{
+					mShape.setPosition(position, mShape.getPosition().y);
+				}
+				else
+				{
+					mShape.setPosition(mShape.getPosition().x, position);
+				}
 			}
 		}
 
@@ -80,16 +92,31 @@ namespace GUI
 	template<class T>
 	void Slider<T>::updateRange()
 	{
-		float right = mOutline.getLocalBounds().right;
-
 		minRange = 0;
-		maxRange = right - mShape.getSize().x;
+		RectF bounds = mOutline.getLocalBounds();
+
+		if (m_orientation == Horizontal)
+		{
+			maxRange = bounds.right - mShape.getSize().x;
+		}
+		else
+		{
+			maxRange = bounds.bottom - mShape.getSize().y;
+		}
 	}
 
 	template<class T>
-	void Slider<T>::setSize(Vector2f size)
+	void Slider<T>::setSize(Vector2f size, float thickness)
 	{
-		mShape.setSize(Vector2f(30, size.y));
+		if (m_orientation == Horizontal)
+		{
+			mShape.setSize(Vector2f(thickness, size.y));
+		}
+		else
+		{
+			mShape.setSize(Vector2f(size.x, thickness));			
+		}
+	
 		mOutline.setSize(size);
 		RectF bounds = mOutline.getLocalBounds();
 		mText.setPosition(bounds.getCenter());
@@ -104,12 +131,49 @@ namespace GUI
 	}
 
 	template<class T>
+	void Slider<T>::setPositionFactor(float factor)
+	{
+		Util::clamp(factor, 0.0f, 1.0f);
+
+		float newPos = factor * (maxRange - minRange) + minRange;
+
+		if (m_orientation == Horizontal)
+		{
+			mShape.setPosition(newPos, mShape.getPosition().y);
+		}
+		else
+		{
+			mShape.setPosition(mShape.getPosition().x, newPos);
+		}
+	}
+
+	template<class T>
+	float Slider<T>::getPositionFactor() const
+	{
+		float position = (m_orientation == Horizontal) ? mShape.getPosition().x : mShape.getPosition().y;
+
+		return (position - minRange) / (maxRange - minRange);
+	}
+
+	template<class T>
+	float Slider<T>::getHandleSize() const
+	{
+		if (m_orientation == Horizontal)
+		{
+			return mShape.getSize().x;// mShape.setSize(Vector2f(thickness, size.y));
+		}
+		else
+		{
+			return mShape.getSize().y; // mShape.setSize(Vector2f(size.x, thickness));
+		}
+	}
+
+	template<class T>
 	int Slider<T>::getIndex()
 	{
 		float size = static_cast<float>(possibleValues.size() - 1);
-		float percent = (mShape.getPosition().x - minRange) / (maxRange - minRange);
 
-		float index = std::round(percent * size);
+		float index = std::round(getPositionFactor() * size);
 	
 		Util::clamp(index, 0.f, size);
 
@@ -126,7 +190,14 @@ namespace GUI
 	template<class T>
 	float Slider<T>::getOffset()
 	{
-		return Mouse::getPosition(window).x - mShape.getPosition().x;
+		if (m_orientation == Horizontal)
+		{
+			return Mouse::getPosition(window).x - mShape.getPosition().x;
+		}
+		else
+		{
+			return Mouse::getPosition(window).y - mShape.getPosition().y;
+		}
 	}
 
 	template<class T>
@@ -151,7 +222,7 @@ namespace GUI
 	template<class T>
 	bool Slider<T>::mouseOver(RectF rect)
 	{
-		return getTransform().transform(rect).contains(Mouse::getPosition(window));
+		return getParentTransform().transform(rect).contains(Mouse::getPosition(window));
 	}
 
 	template<class T>
@@ -159,7 +230,18 @@ namespace GUI
 	{
 		if (isPressed)
 		{
-			float newPos = Mouse::getPosition(window).x - offset;
+			float mouse = 0.0f;
+			
+			if (m_orientation == Horizontal)
+			{
+				mouse = static_cast<float>(Mouse::getPosition(window).x);
+			}
+			else
+			{
+				mouse = static_cast<float>(Mouse::getPosition(window).y);
+			}
+
+			float newPos = mouse - offset;
 			float oldPos = newPos;
 
 			Util::clamp(newPos, minRange, maxRange);
@@ -170,7 +252,15 @@ namespace GUI
 				offset = getOffset();
 			}
 
-			mShape.setPosition(newPos, mShape.getPosition().y);
+			if (m_orientation == Horizontal)
+			{
+				mShape.setPosition(newPos, mShape.getPosition().y);
+			}
+			else
+			{
+				mShape.setPosition(mShape.getPosition().x, newPos);
+			}
+
 			setText(getDisplay());
 			mCallback(getIndex());
 		}
@@ -199,11 +289,27 @@ namespace GUI
 		}
 		else if (mouseOver(mOutline.getGlobalBounds()))
 		{
-			float newPos = Mouse::getPosition(window).x - getPosition().x - mShape.getSize().x / 2.f;
+			float newPos = 0;
+
+			if (m_orientation == Horizontal)
+			{
+				newPos = Mouse::getPosition(window).x - getPosition().x - mShape.getSize().x / 2.0f;
+			}
+			else
+			{
+				newPos = Mouse::getPosition(window).y - getPosition().y - mShape.getSize().y / 2.0f;
+			}
 
 			Util::clamp(newPos, minRange, maxRange);
 
-			mShape.setPosition(newPos, mShape.getPosition().y);
+			if (m_orientation == Horizontal)
+			{
+				mShape.setPosition(newPos, mShape.getPosition().y);
+			}
+			else
+			{
+				mShape.setPosition(mShape.getPosition().x, newPos);
+			}
 
 			setText(getDisplay());
 
@@ -245,11 +351,11 @@ namespace GUI
 
 		switch (buttonType)
 		{
+		case Pressed: color = pressedColor;  break;
 
-		case Pressed:	color = Color(255, 177,  0); break;
-		case Hover:		color = Color(181, 230, 29); break;
-		case Normal:	color = Color( 31, 177, 76); break;
+		case Hover: color = hoverColor; break;
 
+		case Normal: color = normalColor;  break;
 		}
 
 		mShape.setFillColor(color);

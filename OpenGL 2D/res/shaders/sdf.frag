@@ -44,8 +44,8 @@ void main()
                + samp( box.zy, width );
 
     // weighted average, with 4 extra points having 0.5 weight each,
-    // so 1 + 0.5*4 = 3 is the divisor
-    alpha = (alpha + 0.5 * asum) / 3.;
+    // so 1 + 0.5*4.0 = 3 is the divisor
+    alpha = (alpha + 0.5 * asum) / 3.0;
     // -------
 
    	color.rgb =  texture(m_texture[1], texCoord).rgb * vertexColor.rgb;

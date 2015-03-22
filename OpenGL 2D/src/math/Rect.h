@@ -173,5 +173,23 @@ public:
 	T right;
 };
 
+#include <iomanip>
+
+template <class T>
+std::ostream& operator<< (std::ostream& os, const Rect<T>& m)
+{
+	std::cout << std::fixed << std::setprecision(5);
+	std::cout << "(";
+
+	std::cout << std::left << std::setfill(' ') << std::setw(10) << m.top << ", ";
+	std::cout << std::left << std::setfill(' ') << std::setw(10) << m.bottom << ", ";
+	std::cout << std::left << std::setfill(' ') << std::setw(10) << m.left << ", ";
+	std::cout << std::left << std::setfill(' ') << std::setw(10) << m.right;
+
+	std::cout << ")" << std::endl;
+
+	return os;
+}
+
 typedef Rect<float> RectF;
 typedef Rect<int> RectI;

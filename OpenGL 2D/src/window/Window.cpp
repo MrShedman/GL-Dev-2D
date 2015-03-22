@@ -295,6 +295,11 @@ WindowHandle Window::getSystemHandle() const
     return m_impl ? m_impl->getSystemHandle() : 0;
 }
 
+HGLRC Window::getGLDeviceContext() const
+{
+	return m_context ? m_context->getGLContext() : 0;
+}
+
 bool Window::filterEvent(const Event& event)
 {
     // Notify resize events to the derived class

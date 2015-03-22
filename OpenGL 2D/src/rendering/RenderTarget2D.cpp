@@ -63,17 +63,20 @@ void RenderTarget2D::draw(const Drawable& drawable, const RenderStates& states)
 
 #include "CameraPersp.hpp"
 
-void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d, bool n)
+void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool hasNormals, unsigned int offset)
 {
-	RectI viewport = getViewport(camera);
-	int top = getSize().y - viewport.bottom;
-	glViewport(viewport.left, top, viewport.getWidth(), viewport.getHeight());
-	
+	if (!hasNormals)
+	{
+		RectI viewport = getViewport(static_cast<Camera&>(*states.cam));
+		int top = getSize().y - viewport.bottom;
+		glViewport(viewport.left, top, viewport.getWidth(), viewport.getHeight());
+	}
+
 	Shader2D::bind(states.shader);
 
 	//Enable vertex and texture coordinate arrays
 	states.shader->enableVertexPointer();
-	if (n)
+	if (hasNormals)
 	{
 		states.shader->enableNormalPointer();
 	}
@@ -82,22 +85,14 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 
 	//Set texture coordinate data
 	states.shader->setTexCoordPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
-	if (n)
+	if (hasNormals)
 	{
 		states.shader->setNormalPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, normals));
 	}
 	states.shader->setVertexPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
 	states.shader->setColourPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
 
-	if (d)
-	{
-		states.shader->setProjectionMatrix(camera.getTransform());
-	}
-	else
-	{
-		states.shader->setProjectionMatrix(states.cam->getProjection());
-	}
-	
+	states.shader->setProjectionMatrix(states.cam->getProjection());
 	states.shader->setModelViewMatrix(states.transform);
 
 	if (states.texture != NULL)
@@ -111,55 +106,46 @@ void RenderTarget2D::draw(const Vertex* vertices, unsigned int vertexCount, Prim
 	}
 
 	//Update vertex buffer data
-	glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCount * sizeof(Vertex), vertices);
+	glBufferSubData(GL_ARRAY_BUFFER, offset, vertexCount * sizeof(Vertex), vertices);
 
 	static const GLenum modes[] = { GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES,
-		GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
-	
+		GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN };
+
 	GLenum mode = modes[type];
 	//Draw using vertex data and index data
 	glDrawElements(mode, vertexCount, GL_UNSIGNED_INT, NULL);
-	
+
 	//Disable vertex and texture coordinate arrays
 	states.shader->disableVertexPointer();
-	if (n)
+	if (hasNormals)
 	{
 		states.shader->disableNormalPointer();
 	}
 	states.shader->disableTexCoordPointer();
 	states.shader->disableColourPointer();
 
-	Shader2D::bind(NULL);
-
 	Texture::bind(NULL);
+
+	Shader2D::bind(NULL);
 }
 
-void RenderTarget2D::drawInstanced(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states, bool d)
+void RenderTarget2D::drawDeferred(const Vertex* vertices, unsigned int vertexCount, PrimitiveType type, const RenderStates& states)
 {
-	RectI viewport = getViewport(camera);
-	int top = getSize().y - viewport.bottom;
-	glViewport(viewport.left, top, viewport.getWidth(), viewport.getHeight());
-
 	Shader2D::bind(states.shader);
 
 	//Enable vertex and texture coordinate arrays
 	states.shader->enableVertexPointer();
+	states.shader->enableNormalPointer();		
 	states.shader->enableTexCoordPointer();
 	states.shader->enableColourPointer();
 
 	//Set texture coordinate data
 	states.shader->setTexCoordPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, texCoords));
+	states.shader->setNormalPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, normals));
 	states.shader->setVertexPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
 	states.shader->setColourPointer(sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
 
-	if (d)
-	{
-		states.shader->setProjectionMatrix(camera.getTransform());
-	}
-	else
-	{
-		states.shader->setProjectionMatrix(states.cam->getProjection());
-	}
+	states.shader->setProjectionMatrix(states.cam->getProjection());
 
 	states.shader->setModelViewMatrix(states.transform);
 
@@ -185,10 +171,11 @@ void RenderTarget2D::drawInstanced(const Vertex* vertices, unsigned int vertexCo
 
 	//Disable vertex and texture coordinate arrays
 	states.shader->disableVertexPointer();
+	states.shader->disableNormalPointer();
 	states.shader->disableTexCoordPointer();
 	states.shader->disableColourPointer();
 
-	Shader2D::bind(NULL);
-
 	Texture::bind(NULL);
+
+	Shader2D::bind(NULL);
 }

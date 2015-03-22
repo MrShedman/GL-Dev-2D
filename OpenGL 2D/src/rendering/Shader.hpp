@@ -9,6 +9,8 @@
 #include "Color.h"
 #include "GL\glew.h"
 
+#include "..\gl\GLCheck.h"
+
 class Shader2D
 {
 public:
@@ -33,74 +35,93 @@ public:
 	
 	void setVertexPointer(GLsizei stride, const GLvoid* data) const
 	{
-		glVertexAttribPointer(m_positionLocation, 3, GL_FLOAT, GL_FALSE, stride, data);
+		check_gl_error(glVertexAttribPointer(m_positionLocation, 3, GL_FLOAT, GL_FALSE, stride, data));
 	}
 
 	void setNormalPointer(GLsizei stride, const GLvoid* data) const
 	{
-		glVertexAttribPointer(m_normalLocation, 3, GL_FLOAT, GL_TRUE, stride, data);
+		check_gl_error(glVertexAttribPointer(m_normalLocation, 3, GL_FLOAT, GL_TRUE, stride, data));
 	}
 
 	void setTexCoordPointer(GLsizei stride, const GLvoid* data) const
 	{
-		glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, stride, data);
+		check_gl_error(glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, stride, data));
 	}
 
 	void setColourPointer(GLsizei stride, const GLvoid* data) const
 	{
-		glVertexAttribPointer(m_colourLocation, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, data);
+		check_gl_error(glVertexAttribPointer(m_colourLocation, 4, GL_UNSIGNED_BYTE, GL_TRUE, stride, data));
 	}
 
 	void enableVertexPointer() const
 	{
-		glEnableVertexAttribArray(m_positionLocation);
+		check_gl_error(glEnableVertexAttribArray(m_positionLocation));
 	}
 
 	void disableVertexPointer() const
 	{
-		glDisableVertexAttribArray(m_positionLocation);
+		check_gl_error(glDisableVertexAttribArray(m_positionLocation));
 	}
 
 	void enableNormalPointer() const
 	{
-		glEnableVertexAttribArray(m_normalLocation);
+		check_gl_error(glEnableVertexAttribArray(m_normalLocation));
 	}
 
 	void disableNormalPointer() const
 	{
-		glDisableVertexAttribArray(m_normalLocation);
+		check_gl_error(glDisableVertexAttribArray(m_normalLocation));
 	}
 
 	void enableTexCoordPointer() const
 	{
-		glEnableVertexAttribArray(m_texCoordLocation);
+		check_gl_error(glEnableVertexAttribArray(m_texCoordLocation));
 	}
 
 	void disableTexCoordPointer() const
 	{
-		glDisableVertexAttribArray(m_texCoordLocation);
+		check_gl_error(glDisableVertexAttribArray(m_texCoordLocation));
 	}
 
 	void enableColourPointer() const
 	{
-		glEnableVertexAttribArray(m_colourLocation);
+		check_gl_error(glEnableVertexAttribArray(m_colourLocation));
 	}
 
 	void disableColourPointer() const
 	{
-		glDisableVertexAttribArray(m_colourLocation);
+		check_gl_error(glDisableVertexAttribArray(m_colourLocation));
 	}
 
 	void setProjectionMatrix(const Matrix4f& mProjectionMatrix) const
 	{
-		glUniformMatrix4fv(m_projectionMatrixLocation, 1, GL_FALSE, mProjectionMatrix[0]);
+		check_gl_error(glUniformMatrix4fv(m_projectionMatrixLocation, 1, GL_FALSE, mProjectionMatrix[0]));
 	}
 
 	void setModelViewMatrix(const Matrix4f& mModelViewMatrix) const
 	{
-		glUniformMatrix4fv(m_modelViewMatrixLocation, 1, GL_FALSE, mModelViewMatrix[0]);
+		check_gl_error(glUniformMatrix4fv(m_modelViewMatrixLocation, 1, GL_FALSE, mModelViewMatrix[0]));
 	}
 	
+	void setTextureUnit(const std::string& name, int unit)
+	{
+		if (m_programID)
+		{
+			// Enable program
+			Shader2D::bind(this);
+
+			// Get parameter location and assign it new values
+			GLint location = getParamLocation(name);
+			if (location != -1)
+			{
+				check_gl_error(glUniform1i(location, unit));
+			}
+
+			// Disable program
+			Shader2D::bind(NULL);
+		}
+	}
+
 	void setParameter(const std::string& name, float x)
 	{
 		if (m_programID)
@@ -112,7 +133,7 @@ public:
 			GLint location = getParamLocation(name);
 			if (location != -1)
 			{
-				glUniform1f(location, x);
+				check_gl_error(glUniform1f(location, x));
 			}
 
 			// Disable program
@@ -131,7 +152,7 @@ public:
 			GLint location = getParamLocation(name);
 			if (location != -1)
 			{
-				glUniform2f(location, x, y);
+				check_gl_error(glUniform2f(location, x, y));
 			}
 
 			// Disable program
@@ -150,7 +171,7 @@ public:
 			GLint location = getParamLocation(name);
 			if (location != -1)
 			{
-				glUniform3f(location, x, y, z);
+				check_gl_error(glUniform3f(location, x, y, z));
 			}
 
 			// Disable program
@@ -180,7 +201,7 @@ public:
 			if (location != -1)
 			{
 
-				glUniformMatrix4fv(m_projectionMatrixLocation, 1, GL_FALSE, m[0]);
+				check_gl_error(glUniformMatrix4fv(m_projectionMatrixLocation, 1, GL_FALSE, m[0]));
 			}
 
 			// Disable program

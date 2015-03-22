@@ -249,8 +249,12 @@ public:
 
 	inline T Max() const
 	{
-		T max = (x < y) ? y : x;
-		return ((max < z) ? z : max);
+		return std::max(x, std::max(y, z));
+	}
+
+	inline T Min() const
+	{
+		return std::min(x, std::min(y, z));
 	}
 
 	inline T LengthSq() const

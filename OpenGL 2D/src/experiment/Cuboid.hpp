@@ -111,7 +111,7 @@ public:
 
 		states.transform *= getTransform();
 
-		target.draw(&m_vertices[0], m_vertices.size(), Lines, states, false);
+		target.drawDeferred(&m_vertices[0], m_vertices.size(), Lines, states);
 
 		m_verticesBuffer.unbind();
 		m_indicesBuffer.unbind();

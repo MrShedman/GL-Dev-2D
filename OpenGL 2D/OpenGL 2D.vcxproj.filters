@@ -216,6 +216,12 @@
     <ClCompile Include="src\window\WindowImplWin32.cpp">
       <Filter>Source Files\Window</Filter>
     </ClCompile>
+    <ClCompile Include="src\experiment\GBuffer.cpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClCompile>
+    <ClCompile Include="src\gui\ListBox.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.hpp">
@@ -374,9 +380,6 @@
     <ClInclude Include="src\gui\Slider.h">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="src\gui\Toggle.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="src\state\State.hpp">
       <Filter>Header Files\State</Filter>
     </ClInclude>
@@ -460,6 +463,42 @@
     </ClInclude>
     <ClInclude Include="src\rendering\Light.hpp">
       <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\GBuffer.hpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Quad.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\MousePicker.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\math\Ray.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Graph2D.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\CollidableContainer.h">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Collidable.hpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Bolt.hpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\experiment\Layer.hpp">
+      <Filter>Header Files\experiment</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\ListBox.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Theme.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui\Toggle.h">
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

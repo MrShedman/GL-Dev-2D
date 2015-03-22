@@ -19,11 +19,15 @@ Toggle::Toggle(State::Context context)
 	mShape.setOutlineThickness(-5.f);
 	mShape.setOutlineColor(Color::Black);
 
-	mShape.generateVBO();
-
 	RectF bounds = mShape.getLocalBounds();
 	mText.setPosition(bounds.getCenter());
 	mText.setColor(Color::Black);
+}
+
+Toggle::Ptr Toggle::create(State::Context context)
+{
+	std::shared_ptr<Toggle> toggle(new Toggle(context));
+	return toggle;
 }
 
 void Toggle::setCallback(Callback callback)
@@ -53,6 +57,7 @@ void Toggle::setSize(Vector2f size)
 	RectF bounds = mShape.getLocalBounds();
 	mText.setPosition(bounds.getCenter());
 }
+
 void Toggle::setState(bool flag)
 {
 	isSelected = flag;
@@ -60,8 +65,15 @@ void Toggle::setState(bool flag)
 	isSelected ? changeState(Pressed) : changeState(Normal);
 }
 
+Vector2f Toggle::getSize() const
+{
+	return mShape.getSize();
+}
+
 bool Toggle::handleEvent(const Event& event)
 {
+	beginEvent(mouseOver());
+
 	if (event.type == Event::MouseMoved)
 	{
 		mouseMoved();
@@ -75,7 +87,7 @@ bool Toggle::handleEvent(const Event& event)
 		mouseReleased();
 	}
 
-	return mouseOver();
+	return endEvent();
 }
 
 void Toggle::update()
@@ -85,23 +97,26 @@ void Toggle::update()
 	if (mouseOver())
 	{
 		Uint8 rgb = static_cast<Uint8>(std::abs(std::sin(factor)) * 255);
-		mText.setColor(Color(rgb, rgb, rgb));
+		mText.setColor(Color::rgb(rgb, rgb, rgb));
 		factor += 0.05f;
+		isSelected ? changeState(Pressed) : changeState(Hover);
 	}
 	else
 	{
 		mText.setColor(Color::Black);
+		isSelected ? changeState(Pressed) : changeState(Normal);
 	}
+	//mouseMoved();
 }
 
 bool Toggle::mouseOver()
 {
-	return getTransform().transform(mShape.getLocalBounds()).contains(Mouse::getPosition(window));
+	return getParentTransform().transform(mShape.getGlobalBounds()).contains(Mouse::getPosition(window));
 }
 
 void Toggle::mouseMoved()
 {
-	if (mouseOver())
+	if (isMouseOver())
 	{
 		isSelected ? changeState(Pressed) : changeState(Hover);
 	}
@@ -113,7 +128,7 @@ void Toggle::mouseMoved()
 
 void Toggle::mousePressed()
 {
-	if (mouseOver())
+	if (isMouseOver())
 	{
 		isSelected = !isSelected;
 		isSelected ? changeState(Pressed) : changeState(Hover);
@@ -126,7 +141,7 @@ void Toggle::mousePressed()
 
 void Toggle::mouseReleased()
 {
-	if (mouseOver())
+	if (isMouseOver())
 	{
 		mCallback(isSelected);
 	}
@@ -149,11 +164,11 @@ void Toggle::changeState(Type buttonType)
 	switch (buttonType)
 	{
 
-	case Pressed: color = Color(255, 177, 0);  break;
+	case Pressed: color = pressedColor;  break;
 
-	case Hover: color = Color(181, 230, 29); break;
+	case Hover: color = hoverColor; break;
 
-	case Normal: color = Color(31, 177, 76);  break;
+	case Normal: color = normalColor;  break;
 
 	}
 

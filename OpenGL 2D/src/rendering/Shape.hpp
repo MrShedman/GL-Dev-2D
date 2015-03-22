@@ -7,6 +7,8 @@
 #include "..\math\Rect.h"
 #include "GL\glew.h"
 
+#include "..\gl\Buffer.hpp"
+
 #include <vector>
 
 class RenderTarget2D;
@@ -46,13 +48,9 @@ public:
 
 	RectF getGlobalBounds() const;
 
-	void generateVBO();
-
 protected:
 
 	Shape();
-
-	void bindVBO() const;
 
 	void update();
 
@@ -70,11 +68,13 @@ private:
 
 private:
 
-	GLuint m_verticesVBO;
-	GLuint m_indicesVBO;
+	std::vector<Vertex>	m_vertices;         ///< Vertex array containing the fill geometry
+	std::vector<Vertex>	m_outlineVertices;  ///< Vertex array containing the outline geometry
 
-	GLuint m_outlineVerticesVBO;
-	GLuint m_outlineIndicesVBO;
+	Buffer m_verticesBuffer; 
+	Buffer m_indicesBuffer;
+	Buffer m_outlineVerticesBuffer;
+	Buffer m_outlineIndicesBuffer;
 
 private:
 
@@ -83,8 +83,6 @@ private:
 	Color				m_fillColor;        ///< Fill color
 	Color				m_outlineColor;     ///< Outline color
 	float				m_outlineThickness; ///< Thickness of the shape's outline
-	std::vector<Vertex>	m_vertices;         ///< Vertex array containing the fill geometry
-	std::vector<Vertex>	m_outlineVertices;  ///< Vertex array containing the outline geometry
 	RectF				m_insideBounds;     ///< Bounding rectangle of the inside (fill)
 	RectF				m_bounds;           ///< Bounding rectangle of the whole shape (outline + fill)
 };

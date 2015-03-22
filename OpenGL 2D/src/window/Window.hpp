@@ -86,6 +86,8 @@ public:
 
     WindowHandle getSystemHandle() const;
 
+	HGLRC getGLDeviceContext() const;
+
 private:
 
     bool filterEvent(const Event& event);

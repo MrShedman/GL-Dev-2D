@@ -17,10 +17,15 @@
 
 #include "..\rendering\Block.hpp"
 #include "..\rendering\CameraPersp.hpp"
+#include "..\rendering\Light.hpp"
 
 #include "..\experiment\Graph.h"
+#include "..\experiment\Graph2D.h"
 #include "..\experiment\RobotPlanar.h"
 #include "..\experiment\Mesh.h"
+#include "..\experiment\GBuffer.hpp"
+#include "..\experiment\Quad.h"
+#include "..\experiment\CollidableContainer.h"
 
 class GameState : public State
 {
@@ -39,11 +44,19 @@ class GameState : public State
 
 		float speed;
 
+		CollidableContainer m_collidables;
+
+		Quad m_quad;
 		std::vector<Mesh> m_meshes;
+
+		PointLight m_pointLight;
 
 		RobotPlanar m_robot;
 
+		GBuffer m_GBuffer;
+
 		std::vector<Graph> m_graphs;
+		std::vector<Graph2D> m_graphs2;
 
 		CameraPersp cam;
 

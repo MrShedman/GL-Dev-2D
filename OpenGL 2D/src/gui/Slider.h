@@ -22,9 +22,16 @@ template<class T>
 class Slider : public Component
 {
 public:
-	typedef std::shared_ptr<Slider>			Ptr;
+	typedef std::shared_ptr<Slider<T>>			Ptr;
 	typedef std::function<void(int)>		Callback;
 	typedef std::function<std::string(T)>	DisplayFunction;
+
+	enum Orientation
+	{
+		Horizontal,
+		Vertical
+	}
+	m_orientation;
 
 	enum Type
 	{
@@ -36,11 +43,12 @@ public:
 
 public:
 
-	Slider(State::Context context);
+
+	static Ptr				create(State::Context context, Orientation = Horizontal);
 
 	void					setCallback(Callback callback);
 	void					setText(const std::string& text);
-	void					setSize(Vector2f size);
+	void					setSize(Vector2f size, float thickness = 30);
 
 	void					setDisplayFunction(DisplayFunction func);
 	void					setCurrentValue(T value);
@@ -49,7 +57,14 @@ public:
 	virtual bool			handleEvent(const Event& event);
 	virtual void			update();
 
+	void					setPositionFactor(float factor);
+	float					getPositionFactor() const;
+
+	float					getHandleSize() const;
+
 private:
+
+	Slider(State::Context context, Orientation = Horizontal);
 
 	bool					mouseOver(RectF rect);
 	void					mouseMoved();

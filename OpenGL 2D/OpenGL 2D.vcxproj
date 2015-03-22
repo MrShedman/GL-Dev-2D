@@ -66,6 +66,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(ProjectDir)\lib\glew\include\;$(ProjectDir)\lib\Assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -81,11 +82,13 @@
     <ClCompile Include="src\app\MenuState.cpp" />
     <ClCompile Include="src\app\SettingsState.cpp" />
     <ClCompile Include="src\experiment\ConvexHull.cpp" />
+    <ClCompile Include="src\experiment\GBuffer.cpp" />
     <ClCompile Include="src\experiment\Laminate.cpp" />
     <ClCompile Include="src\experiment\Matrix33.cpp" />
     <ClCompile Include="src\gui\Button.cpp" />
     <ClCompile Include="src\gui\Component.cpp" />
     <ClCompile Include="src\gui\Container.cpp" />
+    <ClCompile Include="src\gui\ListBox.cpp" />
     <ClCompile Include="src\gui\Toggle.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\math\Angle.cpp" />
@@ -131,14 +134,22 @@
     <ClInclude Include="src\app\ResourceIdentifiers.hpp" />
     <ClInclude Include="src\app\SettingsState.hpp" />
     <ClInclude Include="src\app\StateIdentifiers.hpp" />
+    <ClInclude Include="src\experiment\Bolt.hpp" />
+    <ClInclude Include="src\experiment\Collidable.hpp" />
+    <ClInclude Include="src\experiment\CollidableContainer.h" />
     <ClInclude Include="src\experiment\Composite.h" />
     <ClInclude Include="src\experiment\ConvexHull.hpp" />
     <ClInclude Include="src\experiment\Cuboid.hpp" />
+    <ClInclude Include="src\experiment\GBuffer.hpp" />
     <ClInclude Include="src\experiment\Graph.h" />
+    <ClInclude Include="src\experiment\Graph2D.h" />
     <ClInclude Include="src\experiment\Laminate.h" />
+    <ClInclude Include="src\experiment\Layer.hpp" />
     <ClInclude Include="src\experiment\Material.h" />
     <ClInclude Include="src\experiment\Matrix33.h" />
     <ClInclude Include="src\experiment\Mesh.h" />
+    <ClInclude Include="src\experiment\MousePicker.h" />
+    <ClInclude Include="src\experiment\Quad.h" />
     <ClInclude Include="src\experiment\Range.h" />
     <ClInclude Include="src\experiment\RobotArm.h" />
     <ClInclude Include="src\experiment\RobotPlanar.h" />
@@ -147,7 +158,9 @@
     <ClInclude Include="src\gui\Button.hpp" />
     <ClInclude Include="src\gui\Component.hpp" />
     <ClInclude Include="src\gui\Container.hpp" />
+    <ClInclude Include="src\gui\ListBox.hpp" />
     <ClInclude Include="src\gui\Slider.h" />
+    <ClInclude Include="src\gui\Theme.hpp" />
     <ClInclude Include="src\gui\Toggle.h" />
     <ClInclude Include="src\math\Angle.hpp" />
     <ClInclude Include="src\math\Frustum.hpp" />
@@ -155,6 +168,7 @@
     <ClInclude Include="src\math\Matrix.h" />
     <ClInclude Include="src\math\Plane.hpp" />
     <ClInclude Include="src\math\Quaternion.h" />
+    <ClInclude Include="src\math\Ray.hpp" />
     <ClInclude Include="src\math\Rect.h" />
     <ClInclude Include="src\math\Vector.h" />
     <ClInclude Include="src\rendering\Block.hpp" />

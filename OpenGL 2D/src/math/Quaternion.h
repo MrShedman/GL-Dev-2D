@@ -2,6 +2,7 @@
 
 #include "Vector.h"
 #include "Matrix.h"
+#include "Angle.hpp"
 #include <iostream>
 
 class Quaternion : public Vector4<float>
@@ -17,10 +18,10 @@ public:
 		Vector4(rhs)
 	{}
 
-	Quaternion(const Vector3f& axis, float angle)
+	Quaternion(const Vector3f& axis, Angle angle)
 	{
-		float sinHalfAngle = std::sin(angle / 2.f);
-		float cosHalfAngle = std::cos(angle / 2.f);
+		float sinHalfAngle = std::sin(angle.asRadians() / 2.f);
+		float cosHalfAngle = std::cos(angle.asRadians() / 2.f);
 
 		x = axis.x * sinHalfAngle;
 		y = axis.y * sinHalfAngle;

@@ -5,7 +5,7 @@
 
 class Texture;
 class Shader2D;
-class CameraPersp;
+class CameraDerived;
 
 class RenderStates
 {
@@ -23,7 +23,7 @@ public:
 
 	//RenderStates(const BlendMode& theBlendMode, const Transform& theTransform, const Texture* theTexture, const Shader* theShader);
 
-	CameraPersp* cam;
+	CameraDerived* cam;
 
 	//BlendMode      blendMode; ///< Blending mode
 	Matrix4f	transform; ///< Transform

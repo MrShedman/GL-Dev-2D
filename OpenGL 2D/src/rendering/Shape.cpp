@@ -2,6 +2,7 @@
 
 #include "RenderTarget2D.h"
 #include "Texture.hpp"
+#include <numeric>
 
 namespace
 {
@@ -43,17 +44,6 @@ namespace
 
 Shape::~Shape()
 {
-	if (m_verticesVBO != 0)
-	{
-		glDeleteBuffers(1, &m_verticesVBO);
-		glDeleteBuffers(1, &m_indicesVBO);
-	}
-
-	if (m_outlineVerticesVBO != 0)
-	{
-		glDeleteBuffers(1, &m_outlineVerticesVBO);
-		glDeleteBuffers(1, &m_outlineIndicesVBO);
-	}
 }
 
 void Shape::setTexture(Texture* texture, bool resetRect)
@@ -133,11 +123,15 @@ RectF Shape::getGlobalBounds() const
 Shape::Shape() :
 m_texture(NULL),
 m_textureRect(),
-m_fillColor(255, 255, 255),
-m_outlineColor(255, 255, 255),
+m_fillColor(Color::rgb(255, 255, 255)),
+m_outlineColor(Color::rgb(255, 255, 255)),
 m_outlineThickness(0),
 m_insideBounds(),
-m_bounds()
+m_bounds(),
+m_verticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_indicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_outlineVerticesBuffer(GL_ARRAY_BUFFER, GL_STATIC_DRAW),
+m_outlineIndicesBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW)
 {
 }
 
@@ -175,11 +169,29 @@ void Shape::update()
 
 	// Outline
 	updateOutline();
+
+	std::vector<GLuint> indices(m_vertices.size());
+
+	std::iota(indices.begin(), indices.end(), 0);
+
+	m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
+	m_indicesBuffer.data(indices.size() * sizeof(GLuint), indices.data());
+
+	if (m_outlineThickness != 0.f)
+	{
+		std::vector<GLuint> outlineIndices(m_outlineVertices.size());
+
+		std::iota(outlineIndices.begin(), outlineIndices.end(), 0);
+
+		m_outlineVerticesBuffer.data(m_outlineVertices.size() * sizeof(Vertex), m_outlineVertices.data());
+		m_outlineIndicesBuffer.data(outlineIndices.size() * sizeof(GLuint), outlineIndices.data());
+	}
 }
 
 void Shape::draw(RenderTarget2D& target, RenderStates states) const
 {
-	bindVBO();
+	m_verticesBuffer.bind();
+	m_indicesBuffer.bind();
 
 	states.transform *= getTransform();
 
@@ -190,6 +202,9 @@ void Shape::draw(RenderTarget2D& target, RenderStates states) const
 	// Render the outline
 	if (m_outlineThickness != 0)
 	{
+		m_outlineVerticesBuffer.bind();
+		m_outlineIndicesBuffer.bind();
+
 		states.texture = NULL;
 		target.draw(&m_outlineVertices[0], m_outlineVertices.size(), TrianglesStrip, states);
 	}
@@ -246,42 +261,6 @@ void Shape::updateOutline()
 		float factor = 1.f + n1.Dot(n2);//(n1.x * n2.x + n1.y * n2.y);
 		Vector3f normal = (n1 + n2) / factor; 
 
-	/*	Vector2f p0;
-
-		// Get the two segments shared by the current point
-		if (i == 0)
-		{
-			p0.x = m_vertices[count].position.x;
-			p0.y = m_vertices[count].position.y;
-		}
-		else
-		{
-			p0.x = m_vertices[index - 1].position.x;
-			p0.y = m_vertices[index - 1].position.y;
-		}
-
-		Vector2f p1(m_vertices[index].position.x, m_vertices[index].position.y);
-		Vector2f p2(m_vertices[index + 1].position.x, m_vertices[index + 1].position.y);
-
-		// Compute their normal
-		Vector2f n1 = (p0 - p1).Normalized();
-		Vector2f n2 = (p1 - p2).Normalized();
-
-		// Make sure that the normals point towards the outside of the shape
-		// (this depends on the order in which the points were defined)
-		if (n1.Dot(m_vertices[0].position - p1) > 0)
-		{
-			n1 = n1.inverted();
-		}
-		if (n2.Dot(m_vertices[0].position - p1) > 0)
-		{
-			n2 = n2.inverted();
-		}
-
-		// Combine them to get the extrusion direction
-		float factor = 1.f + n1.Dot(n2);//(n1.x * n2.x + n1.y * n2.y);
-		Vector2f normal = (n1 + n2) / factor;*/
-
 		// Update the outline points
 		m_outlineVertices[i * 2 + 0].position = p1;
 		m_outlineVertices[i * 2 + 1].position = p1 + normal * m_outlineThickness;
@@ -302,84 +281,4 @@ void Shape::updateOutlineColors()
 {
 	for (unsigned int i = 0; i < m_outlineVertices.size(); ++i)
 		m_outlineVertices[i].color = m_outlineColor;
-}
-
-void Shape::bindVBO() const
-{
-	glBindBuffer(GL_ARRAY_BUFFER, m_verticesVBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicesVBO);
-	
-	if (m_outlineThickness != 0)
-	{
-		glBindBuffer(GL_ARRAY_BUFFER, m_outlineVerticesVBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_outlineIndicesVBO);
-	}
-}
-
-void Shape::generateVBO()
-{
-	if (m_verticesVBO != 0)
-	{
-		glDeleteBuffers(1, &m_verticesVBO);
-		glDeleteBuffers(1, &m_indicesVBO);
-	}
-
-	if (m_outlineVerticesVBO != 0)
-	{
-		glDeleteBuffers(1, &m_outlineVerticesVBO);
-		glDeleteBuffers(1, &m_outlineIndicesVBO);
-	}
-
-	//shape VBO
-	size_t verticesSize = m_vertices.size();
-
-	//Vertex data
-	std::vector<GLuint> indices(verticesSize);
-
-	for (size_t i = 0; i < verticesSize; ++i)
-	{
-		indices[i] = i;
-	}
-
-	//Create VBO
-	glGenBuffers(1, &m_verticesVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, m_verticesVBO);
-	glBufferData(GL_ARRAY_BUFFER, verticesSize * sizeof(Vertex), &m_vertices[0], GL_DYNAMIC_DRAW);
-
-	//Create IBO
-	glGenBuffers(1, &m_indicesVBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indicesVBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, verticesSize * sizeof(GLuint), &indices[0], GL_DYNAMIC_DRAW);
-
-	//Unbind buffers
-	glBindBuffer(GL_ARRAY_BUFFER, NULL);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-
-	//Outline VBO
-	if (m_outlineThickness != 0)
-	{
-		size_t outlineVerticesSize = m_outlineVertices.size();
-
-		//Vertex data
-		std::vector<GLuint> outlineIndices(outlineVerticesSize);
-
-		for (size_t i = 0; i < outlineVerticesSize; ++i)
-		{
-			outlineIndices[i] = i;
-		}
-
-		//Create VBO
-		glGenBuffers(1, &m_outlineVerticesVBO);
-		glBindBuffer(GL_ARRAY_BUFFER, m_outlineVerticesVBO);
-		glBufferData(GL_ARRAY_BUFFER, outlineVerticesSize * sizeof(Vertex), &m_outlineVertices[0], GL_DYNAMIC_DRAW);
-
-		//Create IBO
-		glGenBuffers(1, &m_outlineIndicesVBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_outlineIndicesVBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, outlineVerticesSize * sizeof(GLuint), &outlineIndices[0], GL_DYNAMIC_DRAW);
-
-		//Unbind buffers
-		glBindBuffer(GL_ARRAY_BUFFER, NULL);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, NULL);
-	}
 }

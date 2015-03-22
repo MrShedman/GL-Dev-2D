@@ -31,14 +31,14 @@ void Transform::setPosition(const Vector3f& position)
 	setPosition(position.x, position.y, position.z);
 }
 
-void Transform::setRotation(float angle)
+void Transform::setRotation(Angle angle)
 {
 	setRotation(m_origin, angle);
 }
 
-void Transform::setRotation(const Vector3f& axis, float angle)
+void Transform::setRotation(const Vector3f& axis, Angle angle)
 {
-	setRotation(Quaternion(axis, ToRadians(angle)));
+	setRotation(Quaternion(axis, angle));
 }
 
 void Transform::setRotation(const Quaternion& rotation)
@@ -82,11 +82,11 @@ const Vector3f& Transform::getPosition() const
 	return m_position;
 }
 
-float Transform::get2DRotation() const
+Angle Transform::get2DRotation() const
 {
 	Vector3f right = getRotation().GetRight();
 
-	return ToDegrees(std::atan(right.y / right.x));
+	return radians(std::atan(right.y / right.x)).asDegrees();
 }
 
 const Quaternion& Transform::getRotation() const
@@ -111,20 +111,20 @@ void Transform::move(float offsetX, float offsetY, float offsetZ)
 
 void Transform::move(const Vector3f& offset)
 {
-	setPosition(m_position.x + offset.x, m_position.y + offset.y, m_position.z + offset.z);
+	setPosition(m_position + offset);
 }
 
-void Transform::rotate(float angle)
+void Transform::rotate(Angle angle)
 {
-	rotate(Vector3f(1, 0, 0), angle);
+	rotate(Vector3f(0, 0, 1), angle);
 }
 
-void Transform::rotate(const Vector3f& axis, float angle)
+void Transform::rotate(const Vector3f& axis, Angle angle)
 {
 	rotate(Quaternion(axis, angle));
 }
 
-void Transform::rotate(const Vector3f& pivot, const Vector3f& axis, float angle)
+void Transform::rotate(const Vector3f& pivot, const Vector3f& axis, Angle angle)
 {
 	Quaternion rotation = Quaternion(axis, angle).Normalized();
 
@@ -184,4 +184,9 @@ const Matrix4f& Transform::getInverseTransform() const
 	}
 
 	return m_inverseTransform;
+}
+
+bool Transform::transformNeedsUpdate() const
+{
+	return m_transformNeedUpdate;
 }

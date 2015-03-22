@@ -22,8 +22,12 @@ Button::Button(State::Context context)
 	RectF bounds = mShape.getLocalBounds();
 	mText.setPosition(bounds.getCenter());
 	mText.setColor(Color::Black);
+}
 
-	mShape.generateVBO();
+Button::Ptr	Button::create(State::Context context)
+{
+	std::shared_ptr<Button> button(new Button(context));
+	return button;
 }
 
 void Button::setCallback(Callback callback)
@@ -36,19 +40,25 @@ void Button::setText(const std::string& text)
 	mText.setText(text);
 
 	mText.renderMesh();
-	mText.setOrigin(mText.getBounds().getCenter());
-
+	mText.setOrigin(std::round(mText.getBounds().getCenter().x), std::round(mText.getBounds().getCenter().y));
 }
 
 void Button::setSize(Vector2f size)
 {
 	mShape.setSize(size);
 	RectF bounds = mShape.getLocalBounds();
-	mText.setPosition(bounds.getCenter());
+	mText.setPosition(std::round(bounds.getCenter().x), std::round(bounds.getCenter().y));
+}
+
+Vector2f Button::getSize() const
+{
+	return mShape.getSize();
 }
 
 bool Button::handleEvent(const Event& event)
 {
+	beginEvent(mouseOver());
+
 	if (event.type == Event::MouseMoved)
 	{
 		mouseMoved();
@@ -62,7 +72,7 @@ bool Button::handleEvent(const Event& event)
 		mouseReleased();
 	}
 
-	return mouseOver();
+	return endEvent();
 }
 
 void Button::update()
@@ -72,24 +82,26 @@ void Button::update()
 	if (mouseOver())
 	{
 		Uint8 rgb = static_cast<Uint8>(std::abs(std::sin(factor)) * 255);
-		mText.setColor(Color(rgb, rgb, rgb));
+		mText.setColor(Color::rgb(rgb, rgb, rgb));
 		factor += 0.05f;
-		mText.renderMesh();
+
+		isPressed ? changeState(Pressed) : changeState(Hover);
 	}
 	else
 	{
 		mText.setColor(Color::Black);
+		changeState(Normal);
 	}
 }
 
 bool Button::mouseOver()
 {
-	return getTransform().transform(mShape.getLocalBounds()).contains(Mouse::getPosition(window));
+	return getParentTransform().transform(mShape.getGlobalBounds()).contains(Mouse::getPosition(window));
 }
 
 void Button::mouseMoved()
 {
-	if (mouseOver())
+	if (isMouseOver())
 	{
 		isPressed ? changeState(Pressed) : changeState(Hover);
 	}
@@ -102,18 +114,16 @@ void Button::mouseMoved()
 
 void Button::mousePressed()
 {
-	if (mouseOver())
+	if (isMouseOver())
 	{
 		changeState(Pressed);
 		isPressed = true;
-
-		//mSounds.play(SoundEffect::Button);
 	}
 }
 
 void Button::mouseReleased()
 {
-	if (mouseOver() && isPressed)
+	if (isMouseOver() && isPressed)
 	{
 		changeState(Hover);
 		isPressed = false;
@@ -141,11 +151,11 @@ void Button::changeState(Type buttonType)
 	switch (buttonType)
 	{
 
-	case Pressed: color = Color(255, 177, 0);  break;
+	case Pressed: color = m_theme.getPressed();  break;
 
-	case Hover: color = Color(181, 230, 29); break;
+	case Hover: color = m_theme.getHover(); break;
 
-	case Normal: color = Color(31, 177, 76);  break;
+	case Normal: color = m_theme.getNormal();  break;
 
 	}
 

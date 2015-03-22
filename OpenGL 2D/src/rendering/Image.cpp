@@ -34,5 +34,5 @@ Vector2i Image::getSize() const
 Color Image::getPixel(unsigned int x, unsigned int y) const
 {
 	const unsigned char* pixel = &m_pixels[(x + y * m_size.x) * 4];
-	return Color(pixel[0], pixel[1], pixel[2], pixel[3]);
+	return Color::RGBA(pixel[0], pixel[1], pixel[2], pixel[3]);
 }

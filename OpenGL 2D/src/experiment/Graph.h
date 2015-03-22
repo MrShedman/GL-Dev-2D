@@ -173,10 +173,43 @@ public:
 
 		normalize();
 
+		calcNormals();
+
 		m_verticesBuffer.data(m_vertices.size() * sizeof(Vertex), m_vertices.data());
 		m_indicesBuffer.data(m_indices.size() * sizeof(GLuint), m_indices.data());
 
 		return true;
+	}
+
+	void calcNormals()
+	{
+		std::vector<Vector3f> m_normals;
+		m_normals.reserve(m_vertices.size());
+
+		for (unsigned int i = 0; i < m_vertices.size(); i++)
+			m_normals.push_back(Vector3f(0, 0, 0));
+
+		for (unsigned int i = 0; i < m_indices.size(); i += 3)
+		{
+			int i0 = m_indices[i];
+			int i1 = m_indices[i + 1];
+			int i2 = m_indices[i + 2];
+
+			Vector3f v1 = m_vertices[i1].position - m_vertices[i0].position;
+			Vector3f v2 = m_vertices[i2].position - m_vertices[i0].position;
+
+			Vector3f normal = v1.Cross(v2).Normalized();
+
+			m_normals[i0] = m_normals[i0] + normal;
+			m_normals[i1] = m_normals[i1] + normal;
+			m_normals[i2] = m_normals[i2] + normal;
+		}
+
+		for (unsigned int i = 0; i < m_normals.size(); i++)
+		{
+			//m_normals[i] = m_normals[i].Normalized();
+			m_vertices[i].normals = m_normals[i].Normalized();
+		}
 	}
 
 	virtual void draw(RenderTarget2D& target, RenderStates states) const
@@ -186,12 +219,12 @@ public:
 
 		states.transform *= getTransform();
 
-		target.draw(&m_vertices[0], m_vertices.size(), Triangles, states, false);
+		target.drawDeferred(&m_vertices[0], m_vertices.size(), Triangles, states);
 		
 		if (m_showWireframe)
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			target.draw(&m_wireframe[0], m_wireframe.size(), Triangles, states, false);
+			target.drawDeferred(&m_wireframe[0], m_wireframe.size(), Triangles, states);
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 

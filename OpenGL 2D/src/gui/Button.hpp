@@ -32,7 +32,8 @@ class Button : public Component
 		};
 
 	public:
-								Button(State::Context context);
+
+		static Ptr				create(State::Context context);
 
         void					setCallback(Callback callback);
         void					setText(const std::string& text);
@@ -41,7 +42,11 @@ class Button : public Component
 		virtual bool			handleEvent(const Event& event);
 		virtual void			update();
 
+		Vector2f				getSize() const;
+
     private:
+
+		Button(State::Context context);
 
 		bool mouseOver();
 		void mouseMoved();
@@ -52,6 +57,7 @@ class Button : public Component
 		void					changeState(Type buttonType);
 
     private:
+
 		bool isPressed;
 
         Callback				mCallback;

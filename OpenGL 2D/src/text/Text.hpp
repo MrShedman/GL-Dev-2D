@@ -91,5 +91,7 @@ private:
 	std::vector<Vertex> m_vertices;
 	std::vector<GLuint>	m_indices;
 
+	bool m_bufferNeedsUpdate;
+
 	const Font* m_font;
 };
